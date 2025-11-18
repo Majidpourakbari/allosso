@@ -1,0 +1,259 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+
+class AuthController extends Controller
+{
+    public function show(Request $request): View|RedirectResponse
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        // Always generate new random security code on page load
+        $characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing characters
+        $securityCode = '';
+        for ($i = 0; $i < 5; $i++) {
+            $securityCode .= $characters[random_int(0, strlen($characters) - 1)];
+        }
+        $request->session()->put('security_code', $securityCode);
+
+        return view('auth.sso', [
+            'email' => old('email', ''),
+        ]);
+    }
+
+    public function captcha(Request $request): Response
+    {
+        // Always generate new random code when refresh is requested
+        if ($request->has('refresh')) {
+            $characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing characters
+            $securityCode = '';
+            for ($i = 0; $i < 5; $i++) {
+                $securityCode .= $characters[random_int(0, strlen($characters) - 1)];
+            }
+            $request->session()->put('security_code', $securityCode);
+        }
+        
+        // Get code from session or generate new one
+        $code = $request->session()->get('security_code');
+        if (!$code) {
+            $characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            $code = '';
+            for ($i = 0; $i < 5; $i++) {
+                $code .= $characters[random_int(0, strlen($characters) - 1)];
+            }
+            $request->session()->put('security_code', $code);
+        }
+        
+        // Create image
+        $width = 140;
+        $height = 50;
+        $image = imagecreatetruecolor($width, $height);
+        
+        // Colors
+        $bgColor = imagecolorallocate($image, 6, 9, 20);
+        $textColor = imagecolorallocate($image, 255, 255, 255);
+        $lineColor = imagecolorallocatealpha($image, 255, 255, 255, 80);
+        $noiseColor = imagecolorallocatealpha($image, 255, 255, 255, 60);
+        
+        // Fill background
+        imagefill($image, 0, 0, $bgColor);
+        
+        // Add noise dots
+        for ($i = 0; $i < 100; $i++) {
+            imagesetpixel($image, rand(0, $width), rand(0, $height), $noiseColor);
+        }
+        
+        // Add random lines
+        for ($i = 0; $i < 5; $i++) {
+            imageline($image, rand(0, $width), rand(0, $height), rand(0, $width), rand(0, $height), $lineColor);
+        }
+        
+        // Font settings
+        $fontSize = 5;
+        $x = 20;
+        $y = 30;
+        
+        // Draw each character with slight rotation and offset
+        for ($i = 0; $i < strlen($code); $i++) {
+            $char = $code[$i];
+            $angle = rand(-15, 15);
+            $charX = $x + ($i * 24);
+            $charY = $y + rand(-3, 3);
+            
+            // Draw character
+            imagestring($image, $fontSize, $charX, $charY, $char, $textColor);
+            
+            // Add some distortion with small lines
+            imageline($image, $charX - 2, $charY - 2, $charX + 18, $charY + 2, $noiseColor);
+        }
+        
+        // Output image
+        ob_start();
+        imagepng($image);
+        $imageData = ob_get_contents();
+        ob_end_clean();
+        imagedestroy($image);
+        
+        return response($imageData)
+            ->header('Content-Type', 'image/png')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
+    }
+
+    public function authenticate(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'security_code' => ['required', 'string', 'size:5'],
+        ]);
+
+        // Verify security code
+        $sessionCode = $request->session()->get('security_code');
+        if (!$sessionCode || strtoupper($validated['security_code']) !== strtoupper($sessionCode)) {
+            return back()
+                ->withInput()
+                ->withErrors(['security_code' => 'The security code is incorrect.']);
+        }
+
+        // Regenerate security code after successful verification
+        $request->session()->forget('security_code');
+
+        $email = strtolower($validated['email']);
+
+        // Check if user exists
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            // New user - redirect to registration
+            $request->session()->put('registration_email', $email);
+            return redirect()->route('auth.register.show');
+        }
+
+        // Existing user - redirect to password login
+        $request->session()->put('login_email', $email);
+        return redirect()->route('auth.password.show');
+    }
+
+    public function showPasswordLogin(Request $request): View|RedirectResponse
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        $email = $request->session()->get('login_email');
+        if (!$email) {
+            return redirect()->route('auth.show');
+        }
+
+        return view('auth.password', [
+            'email' => $email,
+        ]);
+    }
+
+    public function passwordLogin(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'password' => ['required', 'string'],
+        ]);
+
+        $email = $request->session()->get('login_email');
+        if (!$email) {
+            return redirect()->route('auth.show');
+        }
+
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return redirect()->route('auth.show');
+        }
+
+        // Check password
+        if (!Hash::check($validated['password'], $user->password)) {
+            return back()
+                ->withInput()
+                ->withErrors(['password' => 'The password is incorrect.']);
+        }
+
+        $request->session()->forget('login_email');
+
+        // Login user
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('dashboard')->with('status', 'Welcome back to AlloSSO!');
+    }
+
+    public function showRegister(Request $request): View|RedirectResponse
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        $email = $request->session()->get('registration_email');
+        if (!$email) {
+            return redirect()->route('auth.show');
+        }
+
+        return view('auth.register', [
+            'email' => $email,
+        ]);
+    }
+
+    public function register(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $email = $request->session()->get('registration_email');
+        if (!$email) {
+            return redirect()->route('auth.show');
+        }
+
+        // Generate unique allohash
+        do {
+            $uniqueCode = Str::random(32) . time() . random_int(1000, 9999);
+            $allohash = Hash::make($uniqueCode);
+        } while (User::where('allohash', $allohash)->exists());
+
+        $user = User::create([
+            'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+            'email' => $email,
+            'phone' => $validated['phone'] ?? null,
+            'password' => Hash::make($validated['password']),
+            'allohash' => $allohash,
+        ]);
+
+        $request->session()->forget('registration_email');
+
+        // Login user directly
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('dashboard')->with('status', 'Registration complete. Welcome to AlloSSO!');
+    }
+
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('auth.show');
+    }
+}
