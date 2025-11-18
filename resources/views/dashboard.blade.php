@@ -423,7 +423,7 @@
                             ERP
                             <span class="badge-exclusive">Exclusive Access</span>
                         </div>
-                        <a class="access-action" href="#" onclick="handleLogin('https://allo-sso.com/erp/allosso', event); return false;">Login</a>
+                        <a class="access-action" href="#" onclick="handleLogin('https://allo-sso.com/erp/allosso.php', event); return false;">Login</a>
                     </li>
                     @endif
 
