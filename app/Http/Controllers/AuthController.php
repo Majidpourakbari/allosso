@@ -61,7 +61,7 @@ class AuthController extends Controller
         $image = imagecreatetruecolor($width, $height);
         
         // Colors
-        $bgColor = imagecolorallocate($image, 6, 9, 20);
+        $bgColor = imagecolorallocate($image, 21, 66, 60);
         $textColor = imagecolorallocate($image, 255, 255, 255);
         $lineColor = imagecolorallocatealpha($image, 255, 255, 255, 80);
         $noiseColor = imagecolorallocatealpha($image, 255, 255, 255, 60);

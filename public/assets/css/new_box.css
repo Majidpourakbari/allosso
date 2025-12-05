@@ -1,0 +1,313 @@
+
+.card {
+    border-radius: 18px;
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0px 12px 25px rgba(0,0,0,0.1);
+  }
+
+  .badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 13px;
+    color: #6bbf00;
+    border: 1px solid #cde9c9;
+    background: #f9fff9;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .icon {
+    width: 45px;
+    height: 45px;
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #123c2c;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .title span {
+    font-size: 22px;
+  }
+
+  .desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #4a5a55;
+  }
+
+  /* Business Digitalization Modal Specific Styles */
+  #businessDigitalizationModal .modal-dialog {
+    max-width: 1100px;
+  }
+  
+  #businessDigitalizationModal .modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  #businessDigitalizationModal .modal-header {
+    border: none;
+    padding: 40px 50px 20px 50px;
+  }
+  
+  #businessDigitalizationModal .modal-title {
+    font-size: 42px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+  }
+  
+  #businessDigitalizationModal .btn-close {
+    position: absolute;
+    right: 35px;
+    top: 35px;
+    font-size: 24px;
+    opacity: 0.7;
+    background: transparent;
+    border: none;
+  }
+  
+  #businessDigitalizationModal .btn-close:hover {
+    opacity: 1;
+  }
+  
+  #businessDigitalizationModal .modal-body {
+    padding: 0 50px 50px 50px;
+  }
+  
+  .categories-sidebar {
+    padding-right: 30px;
+  }
+  
+  .category-item {
+    padding: 14px 24px;
+    margin-bottom: 8px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #4a4a4a;
+    background: transparent;
+    transition: all 0.3s ease;
+    border: none;
+    text-align: left;
+    width: 100%;
+    font-weight: 400;
+  }
+  
+  .category-item:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .category-item.active {
+    background-color: #7cb342;
+    color: white;
+    font-weight: 300;
+  }
+  
+  .service-pills {
+    padding-left: 30px;
+  }
+  
+  .service-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    margin: 8px 8px 8px 0;
+    background-color: #f0f0f0;
+    border-radius: 50px;
+    font-size: 17px;
+    color: #333;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .service-pill:hover {
+    background-color: #e8e8e8;
+    transform: translateY(-2px);
+  }
+  
+  .service-count {
+    color: #7cb342;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  
+  .service-subtitle {
+    color: #666;
+  }
+
+  /* AI Experts Modal Specific Styles */
+  #popup2 .modal-dialog {
+    max-width: 900px;
+  }
+  
+  .ai-experts-modal {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .ai-experts-modal .modal-header {
+    border: none;
+    padding: 40px 50px 20px 50px;
+  }
+  
+  .ai-experts-modal .modal-title {
+    font-size: 42px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+  }
+  
+  .ai-experts-modal .btn-close {
+    position: absolute;
+    right: 35px;
+    top: 35px;
+    font-size: 24px;
+    opacity: 0.7;
+    background: transparent;
+    border: none;
+  }
+  
+  .ai-experts-modal .btn-close:hover {
+    opacity: 1;
+  }
+  
+  .ai-experts-modal .modal-body {
+    padding: 0 50px 50px 50px;
+  }
+  
+  .ai-services-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .ai-services-grid .service-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 24px;
+    background-color: #f0f0f0;
+    border-radius: 50px;
+    font-size: 17px;
+    color: #333;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin: 0;
+    white-space: nowrap;
+  }
+  
+  .ai-services-grid .service-pill:hover {
+    background-color: #e8e8e8;
+    transform: translateY(-2px);
+  }
+
+  /* Local Services Modal Specific Styles */
+  #popup3 .modal-dialog {
+    max-width: 1100px;
+  }
+  
+  .local-services-modal {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .local-services-modal .modal-header {
+    border: none;
+    padding: 40px 50px 20px 50px;
+  }
+  
+  .local-services-modal .modal-title {
+    font-size: 42px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+  }
+  
+  .local-services-modal .btn-close {
+    position: absolute;
+    right: 35px;
+    top: 35px;
+    font-size: 24px;
+    opacity: 0.7;
+    background: transparent;
+    border: none;
+  }
+  
+  .local-services-modal .btn-close:hover {
+    opacity: 1;
+  }
+  
+  .local-services-modal .modal-body {
+    padding: 0 50px 50px 50px;
+  }
+
+  /* Default modal styles for other popups */
+  .modal-content {
+    border-radius: 18px;
+    padding: 30px;
+  }
+
+  .modal-content h2 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #123c2c;
+  }
+
+  @media (max-width: 768px) {
+    #businessDigitalizationModal .modal-dialog,
+    #popup3 .modal-dialog {
+      margin: 20px;
+    }
+    
+    #businessDigitalizationModal .modal-title,
+    .local-services-modal .modal-title {
+      font-size: 28px;
+    }
+    
+    .categories-sidebar {
+      padding-right: 0;
+      margin-bottom: 30px;
+    }
+    
+    .service-pills {
+      padding-left: 0;
+    }
+    
+    #popup2 .modal-dialog {
+      margin: 20px;
+    }
+    
+    .ai-experts-modal .modal-title {
+      font-size: 28px;
+    }
+    
+    .ai-services-grid {
+      gap: 10px;
+    }
+    
+    .ai-services-grid .service-pill {
+      font-size: 15px;
+      padding: 10px 18px;
+    }
+  }

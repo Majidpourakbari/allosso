@@ -1,0 +1,416 @@
+
+.page-wrapper-body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(105deg, #6A9C89 0%, #79A355 10%, #16423C 90%, #16423C 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-top: 100px;
+}
+
+/* Animated background elements */
+.page-wrapper-body::before,
+.page-wrapper-body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    animation: float 20s infinite ease-in-out;
+}
+
+.page-wrapper-body::before {
+    width: 300px;
+    height: 300px;
+    bottom: -150px;
+    left: -150px;
+}
+
+.page-wrapper-body::after {
+    width: 200px;
+    height: 200px;
+    top: -100px;
+    right: -100px;
+    animation-delay: -10s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -30px) rotate(120deg); }
+    66% { transform: translate(-20px, 20px) rotate(240deg); }
+}
+
+.page-wrapper-body {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 70px 100px;
+    position: relative;
+    z-index: 1;
+}
+
+.container {
+    width: 100%;
+    max-width: 1400px;
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.badge-me {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50px;
+    padding: 14px 32px;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 35px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.badge-me::before {
+    content: '●';
+    color: #a4d65e;
+    font-size: 20px;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.main-title-me {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 700;
+    color: white;
+    margin-bottom: 10px;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.highlight-me {
+    color: #a4d65e;
+    display: block;
+    margin-top: 10px;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #a4d65e, #c5e884);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.steps-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin: 70px auto 60px;
+    max-width: 1000px;
+    flex-wrap: nowrap;
+}
+
+.step {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 25px;
+    padding: 22px 30px;
+    color: white;
+    font-size: 17px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 200px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent, rgba(164, 214, 94, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.step:hover {
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.step:hover::before {
+    opacity: 1;
+}
+
+.step-number {
+    background: linear-gradient(135deg, #a4d65e, #8bc34a);
+    color: #1a3d2e;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(164, 214, 94, 0.3);
+}
+
+.connector {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 24px;
+    margin: 0 -10px;
+    flex-shrink: 0;
+}
+
+.cta-button {
+    background: linear-gradient(135deg, #a4d65e 0%, #8bc34a 100%);
+    color: #1a3d2e;
+    border: none;
+    border-radius: 60px;
+    padding: 20px 50px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 30px 0 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 6px 25px rgba(164, 214, 94, 0.35);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+}
+
+.cta-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.cta-button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.cta-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 35px rgba(164, 214, 94, 0.45);
+}
+
+.cta-button span {
+    position: relative;
+    z-index: 1;
+}
+
+.cta-button .arrow {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+    font-size: 22px;
+}
+
+.cta-button:hover .arrow {
+    transform: translateX(5px);
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.feature {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+}
+
+.feature:hover {
+    color: #a4d65e;
+    transform: translateX(5px);
+}
+
+.feature-dot {
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(135deg, #a4d65e, #8bc34a);
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(164, 214, 94, 0.5);
+}
+
+/* Tablet Responsive */
+@media (max-width: 1024px) {
+    .page-wrapper {
+        padding: 60px 60px;
+    }
+
+    .steps-container {
+        gap: 20px;
+    }
+
+    .step {
+        padding: 20px 25px;
+        font-size: 16px;
+    }
+
+    .features {
+        gap: 40px;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .page-wrapper {
+        padding: 50px 30px;
+    }
+
+    .main-title,
+    .highlight {
+        font-size: clamp(2rem, 6vw, 3rem);
+    }
+
+    .steps-container {
+        flex-direction: column;
+        gap: 25px;
+        margin: 50px auto 40px;
+    }
+
+    .step {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .connector {
+        transform: rotate(90deg);
+        margin: -5px 0;
+    }
+
+    .features {
+        flex-direction: column;
+        gap: 25px;
+        align-items: center;
+    }
+
+    .cta-button {
+        padding: 18px 40px;
+        font-size: 17px;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .page-wrapper {
+        padding: 40px 20px;
+    }
+
+    .badge {
+        font-size: 14px;
+        padding: 12px 24px;
+    }
+
+    .main-title,
+    .highlight {
+        font-size: 1.8rem;
+    }
+
+    .step {
+        padding: 18px 22px;
+        font-size: 15px;
+    }
+
+    .step-number {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .cta-button {
+        padding: 16px 35px;
+        font-size: 16px;
+    }
+
+    .feature {
+        font-size: 15px;
+    }
+}
+
+/* Height responsive for landscape mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .page-wrapper {
+        padding: 30px 100px;
+    }
+
+    .main-title,
+    .highlight {
+        font-size: 2rem;
+    }
+
+    .steps-container {
+        margin: 30px auto;
+    }
+
+    .badge {
+        margin-bottom: 20px;
+    }
+
+    .cta-button {
+        margin: 20px 0 30px;
+    }
+}

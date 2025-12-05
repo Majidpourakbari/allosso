@@ -1,0 +1,317 @@
+@import "partials/public";
+@import "partials/variable";
+@import "partials/elements";
+
+body{
+  direction: ltr;
+  text-align: left;
+  font-family: "Poppins" , serif;
+  color: $black1;
+}
+.login_register{
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  .img-back-place{
+    width: 35%;
+    background: url("../images/login/back-login.jpg") no-repeat center;
+    background-size: cover;
+    position: relative;
+    &.register-form{
+      background: url("../images/login/back-register.jpg") no-repeat center;
+    }
+    &.checkout-form{
+      background: url("../images/login/back-checkout.png") no-repeat center $green;
+    }
+    .cover-img{
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #16423C59;
+      z-index: 10;
+    }
+  }
+  .content-place{
+    width: 65%;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-flow: column;
+    z-index: 20;
+    /* width */
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: $green;
+    }
+    .form-place{
+      margin: auto;
+      width: 67%;
+      padding: 4rem 1rem;
+      .logo-place{
+        text-align: center;
+        a{
+          img{
+            width: 200px;
+          }
+        }
+      }
+      #agree{
+        +label{
+          a{
+            margin-left: .25rem;
+          }
+        }
+      }
+      .welcome{
+        font-weight: 500;
+        text-align: center;
+        margin: 2rem 0;
+      }
+      .login-attr{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+        border-radius: 18px;
+        border: 1px solid $light-gray;
+        padding: 0 1rem;
+        height: 3.5rem;
+        font-weight: 600;
+        color: $black1;
+        margin-bottom: 20px;
+        img{
+          margin-right: 10px;
+        }
+      }
+      .or{
+        position: relative;
+        display: flex;
+        justify-content: center;
+        span{
+          position: relative;
+          z-index: 2;
+          background-color: #ffffff;
+          padding: 1rem;
+        }
+        &:before{
+          content: "";
+          width: 100%;
+          height: 1px;
+          background-color: $light-gray;
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+      .input-place{
+        width: 100%;
+        position: relative;
+        margin-bottom: 1rem;
+        label{
+          color: $black-input-color;
+          font-weight: 500;
+          margin-bottom: 10px;
+        }
+        input{
+          width: 100%;
+          border-radius: 18px;
+          border: 1px solid $light-gray;
+          padding: 1rem;
+          &::placeholder{
+            color: $mid-gray;
+          }
+        }
+        &.check-input{
+          display: flex;
+          align-items: center;
+          a{
+            margin-left: auto;
+            color: $green;
+            text-decoration: underline $green;
+          }
+          input{
+            width: unset;
+            display: none;
+            +label{
+              display: flex;
+              align-items: center;
+              color: $mid-gray;
+              span{
+                width: 18px;
+                height: 18px;
+                border: 2px solid #72777B;
+                margin-right: 10px;
+              }
+            }
+          }
+        }
+      }
+      .btn-green{
+        width: 100%;
+        font-weight: 600;
+        padding: 1rem;
+        margin: 20px 0;
+      }
+      .change-login{
+        text-align: center;
+        margin: 30px;
+        color: $mid-gray;
+        a{
+          font-weight: 600;
+          color: $green;
+          text-decoration: underline $green;
+        }
+      }
+      .download-box{
+        .title-box{
+          color: $black1;
+          font-weight: 500;
+          font-size: 20px;
+          text-align: center;
+        }
+        .card-place{
+          display: flex;
+          align-items: center;
+          width: 80%;
+          margin: 0 auto;
+          .download-card{
+            background-color: $green;
+            width: 100%;
+            border-radius: 18px;
+            margin-right: 12px;
+            padding: 12px 1rem;
+            display: flex;
+            margin-top: 12px;
+            align-items: center;
+            transition: .3s ease-in-out;
+            &:hover{
+              background-color: $Accent-color-hover;
+            }
+            .img-place{
+              margin-right: 14px;
+            }
+            .title{
+              color: $Dark-color;
+              font-size: 14px;
+            }
+            .name{
+              font-weight: 600;
+              color: #ffffff;
+              margin-top: 4px;
+            }
+            &:last-child{
+              margin-right: 0;
+            }
+            &.black-bg{
+              background-color: $black1;
+              .title{
+                color: #4B4B4B;
+              }
+              &:hover{
+                background-color: #111111;
+              }
+            }
+          }
+        }
+      }
+      .choose-input{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: $green;
+        border-radius: 18px;
+        width: max-content;
+        padding: 1rem;
+        margin: 26px auto;
+        .choose{
+          input{
+            display: none;
+            +label{
+              text-align: center;
+              border-radius: 18px;
+              padding: 24px;
+              cursor: pointer;
+              .icon-type{
+                font-size: 2rem;
+              }
+              .name{
+                font-weight: 500;
+                margin-top: 12px;
+                margin-bottom: 8px;
+              }
+              .title{
+                font-weight: 400;
+              }
+              span{
+                display: block;
+                color: #ffffff;
+              }
+            }
+            &:checked{
+              +label{
+                background-color: #ffffff;
+                .icon-type{
+                  color: $green;
+                }
+                .name{
+                  color: $green;
+                }
+                .title{
+                  color: $Dark-color;
+                }
+              }
+            }
+          }
+        }
+      }
+      .payment-text-form{
+        margin: 23px 0;
+      }
+    }
+    .top-sec{
+      padding: 4rem;
+      .site-map{
+        margin-top: 20px;
+        .active{
+          color: $Dark-color;
+        }
+      }
+      .price_job_detail{
+        position: fixed;
+        left: 65%;
+        padding: 56px;
+        .price{
+          font-size: 50px;
+          font-weight: 700;
+          color: #ffffff;
+        }
+        .job-title{
+          font-weight: 500;
+          font-size: 20px;
+          color: $Dark-color;
+          margin: 28px 0;
+        }
+        .job-code{
+          color: #ffffff;
+        }
+      }
+    }
+  }
+}
+
+
+
+@import "partials/media";

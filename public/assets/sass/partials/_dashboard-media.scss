@@ -1,0 +1,103 @@
+@media screen and (min-width: 992px) {
+  .dashboard-header{
+    .cover-menu-nav{
+      display: none !important;
+    }
+  }
+  .card-them-place{
+    &.side-Contacts-sec,&.main-messages{
+      display: block !important;
+    }
+  }
+}
+@media screen and (max-width: 1400px) {
+  .dashboard-header{
+    padding: 12px 1rem;
+  }
+  .main-dashboard-sec{
+    padding: 56px 0;
+  }
+  .main-dash{
+    padding: 62px 1rem 0;
+
+  }
+}
+@media screen and (max-width: 1199.98px) {
+  .dashboard-header{
+    .logo-place{
+      .desktop-logo{
+        display: none;
+      }
+      .mobile-logo{
+        display: block;
+      }
+    }
+  }
+}
+@media screen and (max-width: 991.98px) {
+  .menu-button{
+    display: block;
+    margin-left: 20px;
+  }
+  .dashboard-header{
+    nav{
+      position: fixed;
+      left: -400px;
+      top: 0;
+      background-color: #ffffff;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+      display: block;
+      height: 100%;
+      overflow-y: auto;
+      box-shadow: 0 6px 2rem rgba(26, 30, 33, 0.1);
+      transition: .3s ease-in-out;
+      &::-webkit-scrollbar {
+        width: 10px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: $green;
+        border-radius: 1rem;
+      }
+      .item-menu{
+        margin: 0;
+        a{
+          border-radius: 0;
+          padding: 1rem 2rem;
+        }
+      }
+    }
+  }
+  .main-dashboard-sec{
+    padding-top: 1rem;
+  }
+  .card-them-place{
+    .side-sec{
+      .Contacts-place{
+        height: calc(100vh - 14rem);
+      }
+    }
+    &.main-messages{
+      display: none;
+      .messages-box{
+        height: calc(100vh - 25rem);
+        padding-bottom: 8px;
+      }
+    }
+  }
+  .card-element{
+    .items-place{
+      display: block;
+    }
+  }
+}
+@media screen and (max-width: 767.98px) {
+
+}
+@media screen and (max-width: 575.98px) {
+
+}
+@media screen and (max-width: 400px) {
+  
+}
