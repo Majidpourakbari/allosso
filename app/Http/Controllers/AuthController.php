@@ -13,6 +13,60 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    /**
+     * Detect platform from referrer or query parameter
+     */
+    private function detectPlatform(Request $request): ?array
+    {
+        // Check query parameter first
+        $platformParam = $request->query('platform');
+        if ($platformParam) {
+            return $this->getPlatformInfo($platformParam);
+        }
+
+        // Check referrer
+        $referer = $request->header('referer');
+        if ($referer) {
+            $refererHost = parse_url($referer, PHP_URL_HOST);
+            if ($refererHost) {
+                // Remove www. prefix
+                $refererHost = preg_replace('/^www\./', '', $refererHost);
+                
+                // Map domains to platforms
+                if (strpos($refererHost, 'allolancer.com') !== false) {
+                    return $this->getPlatformInfo('allolancer');
+                } elseif (strpos($refererHost, 'alloai.com') !== false || strpos($refererHost, 'allo-ai.com') !== false) {
+                    return $this->getPlatformInfo('alloai');
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get platform information
+     */
+    private function getPlatformInfo(string $platform): array
+    {
+        $platforms = [
+            'allolancer' => [
+                'name' => 'AlloLancer',
+                'domain' => 'allolancer.com',
+                'logo' => 'allolaner.jpg', // Note: actual filename is allolaner.jpg
+                'message' => 'برای ورود به سایت AlloLancer باید ورود و عضویت کنید',
+            ],
+            'alloai' => [
+                'name' => 'AlloAI',
+                'domain' => 'alloai.com',
+                'logo' => 'alloai.jpg',
+                'message' => 'برای ورود به سایت AlloAI باید ورود و عضویت کنید',
+            ],
+        ];
+
+        return $platforms[strtolower($platform)] ?? null;
+    }
+
     public function show(Request $request): View|RedirectResponse
     {
         if (Auth::check()) {
@@ -27,8 +81,17 @@ class AuthController extends Controller
         }
         $request->session()->put('security_code', $securityCode);
 
+        // Store platform in session if detected
+        $platform = $this->detectPlatform($request);
+        if ($platform) {
+            $request->session()->put('platform', $platform);
+        } else {
+            $platform = $request->session()->get('platform');
+        }
+
         return view('auth.sso', [
             'email' => old('email', ''),
+            'platform' => $platform,
         ]);
     }
 
@@ -157,8 +220,12 @@ class AuthController extends Controller
             return redirect()->route('auth.show');
         }
 
+        // Get platform from session
+        $platform = $request->session()->get('platform');
+
         return view('auth.password', [
             'email' => $email,
+            'platform' => $platform,
         ]);
     }
 
@@ -205,8 +272,12 @@ class AuthController extends Controller
             return redirect()->route('auth.show');
         }
 
+        // Get platform from session
+        $platform = $request->session()->get('platform');
+
         return view('auth.register', [
             'email' => $email,
+            'platform' => $platform,
         ]);
     }
 

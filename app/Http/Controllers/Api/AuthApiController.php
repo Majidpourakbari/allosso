@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthApiController extends Controller
 {
@@ -74,5 +75,67 @@ class AuthApiController extends Controller
             'valid' => $exists,
             'message' => $exists ? 'Allohash is valid' : 'Allohash is invalid',
         ], 200);
+    }
+
+    public function externalAuth(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'name' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $email = strtolower($validated['email']);
+        $password = $validated['password'];
+        $name = $validated['name'] ?? null;
+
+        $user = User::where('email', $email)->first();
+
+        if ($user) {
+            if (!Hash::check($password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid email or password',
+                ], 401)->header('Access-Control-Allow-Origin', '*')
+                         ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+                         ->header('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
+            }
+
+            if (!$user->allohash) {
+                do {
+                    $uniqueCode = Str::random(32) . time() . random_int(1000, 9999);
+                    $allohash = Hash::make($uniqueCode);
+                } while (User::where('allohash', $allohash)->exists());
+
+                $user->allohash = $allohash;
+                $user->save();
+            }
+        } else {
+            do {
+                $uniqueCode = Str::random(32) . time() . random_int(1000, 9999);
+                $allohash = Hash::make($uniqueCode);
+            } while (User::where('allohash', $allohash)->exists());
+
+            $user = User::create([
+                'name' => $name ?? explode('@', $email)[0],
+                'email' => $email,
+                'password' => Hash::make($password),
+                'allohash' => $allohash,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Authentication successful',
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'allohash' => $user->allohash,
+                'created_at' => $user->created_at?->toISOString(),
+            ],
+        ], 200)->header('Access-Control-Allow-Origin', '*')
+               ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+               ->header('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
     }
 }

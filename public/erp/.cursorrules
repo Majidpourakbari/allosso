@@ -1,0 +1,894 @@
+# Cursor Rules
+
+## Scratchpad - Dashboard Broadcast Feature Implementation
+
+### Problem Analysis
+- Need to show last meetings and voting polls on dashboard with Telegram-like functionality
+- Users should be able to respond to meetings and vote on polls directly from dashboard
+- Need to display real-time statistics and response counts
+- Should provide detailed views similar to Telegram interface
+- **NEW**: Need to only show meetings and voting polls where user hasn't participated yet
+
+### Root Cause
+1. Dashboard only shows basic statistics cards
+2. No integration with broadcast system
+3. No way to interact with meetings and voting polls from dashboard
+4. Missing real-time data display for broadcast activities
+5. **NEW**: Dashboard shows all meetings and polls regardless of user participation
+
+### Solution Plan
+1. ✅ Create API endpoint to fetch latest meetings and voting polls
+2. ✅ Add broadcast section to dashboard with two columns
+3. ✅ Implement Telegram-like interface with response buttons
+4. ✅ Add detailed modal views for meetings and voting polls
+5. ✅ Implement interactive response functionality
+6. ✅ Add real-time statistics and response counts
+7. ✅ Create responsive design with hover effects
+8. ✅ **NEW**: Filter API to only show unparticipated meetings and polls
+9. ✅ **NEW**: Update UI to show "pending" items only
+10. ✅ **NEW**: Add better messaging for empty states
+
+### Files Modified
+- ✅ `get_dashboard_broadcasts.php` - New API endpoint for dashboard data
+- ✅ `dashboard.php` - Added broadcast section with interactive features
+- ✅ **NEW**: `get_dashboard_broadcasts.php` - Updated to filter unparticipated items
+- ✅ **NEW**: `dashboard.php` - Updated UI labels and empty state messages
+
+### Implementation Completed
+1. ✅ Created `get_dashboard_broadcasts.php` with:
+   - Latest 5 meetings with response statistics
+   - Latest 5 voting polls with vote counts
+   - Proper data formatting for frontend display
+   - Error handling and authentication checks
+2. ✅ Updated `dashboard.php` with:
+   - Broadcast section with two-column layout
+   - Meeting cards with accept/decline buttons
+   - Voting poll cards with vote buttons
+   - Detailed modal views for both types
+   - Real-time statistics display
+   - Interactive response functionality
+   - Telegram-like styling and animations
+3. ✅ Added features:
+   - Hover effects and smooth transitions
+   - Response buttons with visual feedback
+   - Detailed modal views with response tables
+   - Real-time data refresh every 30 seconds
+   - Success notifications using SweetAlert
+   - Responsive design for all screen sizes
+4. ✅ **NEW**: Updated API filtering:
+   - Only show meetings where user hasn't responded yet
+   - Only show voting polls where user hasn't voted yet
+   - Use user's chat_id to filter participation
+   - Maintain proper statistics for unparticipated items
+5. ✅ **NEW**: Updated UI improvements:
+   - Changed section titles to "Pending Meetings" and "Pending Voting Polls"
+   - Updated empty state messages to indicate completion
+   - Better icons for empty states (calendar-check, poll-h)
+   - Added explanatory text for empty states
+
+### Technical Details
+- API endpoint returns formatted data with statistics
+- Frontend uses fetch API for data loading
+- Interactive buttons simulate Telegram responses
+- Modal views show detailed information and responses
+- Real-time refresh keeps data current
+- Responsive design works on all devices
+- Hover effects provide visual feedback
+- Success notifications confirm user actions
+- **NEW**: SQL queries filter out participated items using NOT IN subqueries
+- **NEW**: User participation tracked by chat_id in response tables
+- **NEW**: Empty states provide clear feedback about completion status
+
+### Next Steps
+- Test the dashboard broadcast functionality
+- Verify that only unparticipated meetings and polls are shown
+- Test interactive response buttons
+- Ensure modal views work properly
+- Verify real-time data refresh functionality
+- Test responsive design on different screen sizes
+- **NEW**: Verify filtering works correctly for different users
+- **NEW**: Test empty state messages when all items are completed
+
+---
+
+## Scratchpad - Voting System Enhancement
+
+### Problem Analysis
+- Latest Voting Polls functionality had errors and poor user experience
+- Data structure inconsistency between API and frontend
+- Complex voting flow with poor UI/UX
+- Limited error handling and user feedback
+- Voting interface was not intuitive and lacked visual appeal
+
+### Root Cause
+1. Data structure inconsistency: API returned options with `text` property but functions expected `option_text`
+2. Complex voting flow using SweetAlert with complex HTML generation
+3. Poor error handling and limited user feedback
+4. Unintuitive voting interface without visual progress indicators
+5. Missing loading states and proper user guidance
+
+### Solution Plan
+1. ✅ Create new modern voting modal with progress bars and statistics
+2. ✅ Fix data structure consistency issues
+3. ✅ Implement better error handling and user feedback
+4. ✅ Add loading states and proper user guidance
+5. ✅ Create intuitive voting interface with visual progress indicators
+6. ✅ Add "View Results" functionality for detailed voting analytics
+7. ✅ Improve voting poll preview with top options by vote count
+
+### Files Modified
+- ✅ `dashboard.php` - Complete voting system overhaul with new UI/UX
+
+### Implementation Completed
+1. ✅ Created new `showVotingModal()` function with:
+   - Modern modal design with gradient backgrounds
+   - Progress bars showing vote percentages
+   - Real-time statistics display
+   - Intuitive voting buttons with loading states
+   - Professional styling with hover effects
+2. ✅ Implemented new `castVote()` function with:
+   - Proper error handling and user feedback
+   - Loading states during voting process
+   - Success/error notifications
+   - Automatic data refresh after voting
+3. ✅ Enhanced voting poll rendering with:
+   - Top options preview sorted by vote count
+   - Percentage calculations for each option
+   - Better visual hierarchy and information display
+   - "Vote Now" and "View Results" buttons
+4. ✅ Added comprehensive CSS styling:
+   - Modern voting modal with rounded corners and shadows
+   - Gradient backgrounds and hover effects
+   - Progress bars with smooth animations
+   - Responsive design for all screen sizes
+   - Custom scrollbar styling
+5. ✅ Fixed data structure consistency:
+   - Proper handling of both `text` and `option_text` properties
+   - Fallback mechanisms for different data formats
+   - Robust error handling for missing data
+6. ✅ Added "View Results" functionality:
+   - Separate button for viewing detailed voting analytics
+   - Integration with existing voting details modal
+   - Loading states and error handling
+
+### Technical Details
+- New voting modal uses SweetAlert with custom HTML and CSS
+- Progress bars show real-time vote percentages
+- Statistics section displays options count, total votes, and broadcast type
+- Voting buttons have loading states and proper error handling
+- Data structure handles both API formats consistently
+- Responsive design works on all device sizes
+- Custom CSS provides modern, professional appearance
+
+### User Experience Improvements
+- **Before**: Complex, confusing voting interface with poor feedback
+- **After**: Modern, intuitive voting modal with:
+  - Clear visual progress indicators
+  - Real-time statistics and percentages
+  - Loading states and success/error feedback
+  - Professional styling and smooth animations
+  - Separate voting and results viewing options
+  - Better information hierarchy and readability
+
+### Next Steps
+- Test the new voting system functionality
+- Verify that voting works correctly with all poll types
+- Test error handling and edge cases
+- Ensure responsive design works on all devices
+- Verify data consistency across different scenarios
+- Test "View Results" functionality
+- Monitor user feedback and usage patterns
+
+---
+
+## Scratchpad - Broadcast Message Types Implementation
+
+### Problem Analysis
+- Need to modify broadcast page to support two different types of messages
+- 1. Meeting info with accept/decline buttons using Telegram keyboards
+- 2. Voting polls with custom options using Telegram keyboards
+- Current broadcast only sends simple text messages
+- Need to save meeting and voting data in database for tracking and history
+
+### Root Cause
+1. Single message type in broadcast system
+2. No Telegram keyboard support for interactive messages
+3. No webhook handling for button responses
+4. No database tables for storing responses
+5. No database storage for meeting and voting data
+
+### Solution Plan
+1. ✅ Update broadcast.php to support two message types
+2. ✅ Create meeting info form with title, date, time, creator, description
+3. ✅ Create voting form with title, description, and dynamic options
+4. ✅ Update send_broadcast.php to handle new message types
+5. ✅ Create Telegram keyboard functions for interactive messages
+6. ✅ Create telegram_webhook.php for handling button responses
+7. ✅ Create database tables for storing responses
+8. ✅ Create migration script for new tables
+9. ✅ Add database storage for meeting and voting data
+10. ✅ Create broadcast history page for viewing saved data
+
+### Files Modified
+- ✅ `broadcast.php` - Complete redesign with two message type forms
+- ✅ `send_broadcast.php` - Updated to handle meeting and voting messages with database storage
+- ✅ `telegram_webhook.php` - Updated webhook handler for button responses with new database structure
+- ✅ `sql/create_meetings_table.sql` - Database table for storing meeting information
+- ✅ `sql/create_voting_polls_table.sql` - Database table for storing voting poll information
+- ✅ `sql/create_voting_options_table.sql` - Database table for storing voting poll options
+- ✅ `sql/create_meeting_responses_table.sql` - Updated database table for meeting responses
+- ✅ `sql/create_voting_responses_table.sql` - Updated database table for voting responses
+- ✅ `run_broadcast_tables_migration.php` - Updated migration script for all new tables
+- ✅ `broadcast_history.php` - New page for viewing broadcast history
+- ✅ `get_meeting_details.php` - API endpoint for meeting details
+- ✅ `get_voting_details.php` - API endpoint for voting poll details
+
+### Implementation Completed
+1. ✅ Created message type selection with radio buttons (Meeting Info / Voting)
+2. ✅ Built meeting info form with:
+   - Broadcast type selection (All Users / Selected Users)
+   - Meeting title, date, time, creator name, description
+   - User selection dropdown for targeted broadcasts
+3. ✅ Built voting form with:
+   - Broadcast type selection (All Users / Selected Users)
+   - Voting title and description
+   - Dynamic voting options (add/remove functionality)
+   - User selection dropdown for targeted broadcasts
+4. ✅ Updated send_broadcast.php with:
+   - Message type handling (meeting/voting)
+   - Database storage functions for meetings and voting polls
+   - sendMeetingMessage() function with accept/decline buttons
+   - sendVotingMessage() function with custom option buttons
+   - Telegram inline keyboard support
+5. ✅ Created telegram_webhook.php with:
+   - Callback query handling for button clicks
+   - Meeting response processing (accept/decline)
+   - Voting response processing
+   - Message updating to show responses
+   - Database storage of responses with proper relationships
+6. ✅ Created comprehensive database structure:
+   - meetings table for storing meeting information
+   - voting_polls table for storing voting poll information
+   - voting_options table for storing voting poll options
+   - meeting_responses table for storing accept/decline responses
+   - voting_responses table for storing voting poll responses
+   - Proper foreign key relationships and constraints
+7. ✅ Created migration script for easy database setup
+8. ✅ Created broadcast history page with:
+   - Meeting history with response counts
+   - Voting poll history with vote counts
+   - Detailed view modals for both types
+   - Individual response tracking
+9. ✅ Created API endpoints for detailed views:
+   - get_meeting_details.php for meeting details and responses
+   - get_voting_details.php for voting poll details and votes
+
+### Technical Details
+- Meeting messages include: title, date, time, creator, description
+- Meeting buttons: ✅ Accept / ❌ Decline with callback data
+- Voting messages include: title, description, custom options
+- Voting buttons: Dynamic options based on user input
+- Database tables with proper indexing, constraints, and foreign keys
+- Webhook handles real-time response updates
+- Messages are updated in real-time to show responses
+- Complete data persistence for meetings, voting polls, and responses
+- History tracking with detailed analytics
+- User-friendly interface for viewing broadcast history
+
+### Database Schema
+- **meetings**: id, title, meeting_date, meeting_time, creator_name, description, broadcast_type, created_by, created_at
+- **voting_polls**: id, title, description, broadcast_type, created_by, created_at
+- **voting_options**: id, poll_id, option_text, option_order, created_at
+- **meeting_responses**: id, meeting_id, chat_id, user_name, response, created_at
+- **voting_responses**: id, poll_id, option_id, chat_id, user_name, created_at
+
+### Next Steps
+- Run the migration script to create database tables
+- Set up Telegram webhook URL in bot settings
+- Test meeting info sending with accept/decline buttons
+- Test voting poll sending with custom options
+- Verify button responses are processed correctly
+- Test message updates showing response results
+- Test broadcast history page functionality
+- Verify data persistence and relationships
+
+---
+
+## Scratchpad - Allo Section Feature Implementation
+
+### Problem Analysis
+- Need to add "Allo Section" dropdown to Create New Task, Edit Task, and filters
+- Options required: allolancer, allohub erp, alloAi
+- Need to add database column and update all related functionality
+
+### Root Cause
+1. Missing allo_section field in tasks table
+2. No UI components for Allo Section selection
+3. Missing filter functionality for Allo Section
+4. No backend handling for allo_section field
+
+### Solution Plan
+1. ✅ Create database migration for allo_section column
+2. ✅ Add Allo Section dropdown to filters section
+3. ✅ Add Allo Section field to Create New Task modal
+4. ✅ Add Allo Section field to Edit Task modal
+5. ✅ Update table header to include Allo Section column
+6. ✅ Update filter_tasks.php to handle allo_section filter
+7. ✅ Update create_task.php to handle allo_section field
+8. ✅ Update update_task.php to handle allo_section field
+9. ✅ Update JavaScript functions to handle allo_section
+10. ✅ Create migration script for database changes
+
+### Files Modified
+- ✅ `sql/add_allo_section_to_tasks.sql` - Database migration SQL
+- ✅ `run_allo_section_migration.php` - Migration script
+- ✅ `tasks.php` - Added Allo Section UI components and JavaScript
+- ✅ `filter_tasks.php` - Added allo_section filter support
+- ✅ `create_task.php` - Added allo_section field handling
+- ✅ `update_task.php` - Added allo_section field handling
+
+### Implementation Completed
+1. ✅ Added allo_section VARCHAR(50) column to tasks table
+2. ✅ Added index for better performance on allo_section queries
+3. ✅ Added Allo Section dropdown to filters with options: allolancer, allohub erp, alloAi
+4. ✅ Added Allo Section field to Create New Task modal (required field)
+5. ✅ Added Allo Section field to Edit Task modal
+6. ✅ Updated table header to include Allo Section column
+7. ✅ Updated filter functionality to include allo_section parameter
+8. ✅ Updated backend files to handle allo_section field in CRUD operations
+9. ✅ Updated JavaScript functions to populate and handle allo_section field
+10. ✅ Created migration script for easy database setup
+11. ✅ Fixed JavaScript syntax errors and missing modal elements
+12. ✅ Fixed "Missing required fields" error by providing default values for group_id and task_phase
+
+### Technical Details
+- Database column: `allo_section VARCHAR(50) NULL DEFAULT NULL`
+- Filter options: allolancer, allohub erp, alloAi
+- Field is required in Create New Task modal
+- Field is optional in Edit Task modal
+- Added proper indexing for performance
+- Updated all related PHP files for full functionality
+
+### Next Steps
+- ✅ Run the migration script to add the database column
+- Test the Create New Task functionality with Allo Section
+- Test the Edit Task functionality with Allo Section
+- Test the filter functionality for Allo Section
+- Verify that all CRUD operations work correctly
+
+---
+
+## Scratchpad - Calendar Date Issue Fix
+
+### Problem Analysis
+- Calendar dates are being saved 1 day less than what's set
+- Issue identified: Timezone mismatch between client-side JavaScript and server-side PHP
+- Server is set to Asia/Tehran timezone (UTC+3:30)
+- JavaScript `toISOString()` converts to UTC, causing date shift
+
+### Root Cause
+1. JavaScript `toISOString()` converts local date to UTC
+2. When date is in Tehran timezone (UTC+3:30), converting to UTC shifts the date back
+3. Example: 2024-01-15 00:00 Tehran time becomes 2024-01-14 20:30 UTC
+4. Server receives 2024-01-14 instead of 2024-01-15
+
+### Solution Plan
+1. ✅ Analyze the issue in calendar.js and update_checklist_dates.php
+2. ✅ Fix JavaScript date handling to preserve local timezone
+3. ✅ Update PHP to handle timezone conversion properly
+4. ✅ Test the fix
+
+### Files Modified
+- ✅ `assets/js/calendar.js` - Fixed date conversion in eventDrop and eventResize
+- ✅ `tasks.php` - Fixed calendar date handling in main tasks file
+- ✅ `update_checklist_dates.php` - Already handles dates correctly
+
+### Implementation Completed
+1. ✅ Replaced `toISOString()` with local date formatting in JavaScript
+2. ✅ Created `formatLocalDate()` function to preserve local timezone
+3. ✅ Fixed all instances in:
+   - Calendar event drop/resize
+   - Task creation
+   - Task notes
+   - Document links
+   - File uploads
+   - Checklist items
+
+### Technical Details
+- Used `getFullYear()`, `getMonth()`, `getDate()` instead of `toISOString()`
+- Maintained local timezone context throughout the application
+- Preserved existing time handling with `toTimeString()`
+- No changes needed to PHP backend as it already handles dates correctly
+
+### Next Steps
+- ✅ Test the calendar functionality to ensure dates are saved correctly
+- ✅ Verify that all date-related features work as expected
+
+---
+
+## Scratchpad - Task Details Offcanvas Close Button Fix
+
+### Problem Analysis
+- Task Details offcanvas close button (X) not working
+- Issue identified: Bootstrap data attributes not properly handling offcanvas dismissal
+- Manual initialization of offcanvas may conflict with automatic Bootstrap handling
+
+### Root Cause
+1. Offcanvas is initialized manually with JavaScript
+2. `data-bs-dismiss="offcanvas"` attribute expects automatic Bootstrap handling
+3. Conflict between manual initialization and automatic dismissal
+
+### Solution Plan
+1. ✅ Add manual event listener for close button
+2. ✅ Create global function to close offcanvas
+3. ✅ Add onclick handler as backup
+4. ✅ Test the fix
+
+### Files Modified
+- ✅ `tasks.php` - Added manual close button handling
+
+### Implementation Completed
+1. ✅ Added manual event listener for Task Details offcanvas close button
+2. ✅ Created `closeTaskDetailsOffcanvas()` global function
+3. ✅ Added onclick handler to close button as backup
+4. ✅ Added manual event listener for Calendar offcanvas close button
+
+### Technical Details
+- Used `bootstrap.Offcanvas.getInstance()` to get existing instance
+- Added both event listener and onclick handler for redundancy
+- Ensured proper Bootstrap instance management
+- Applied same fix to Calendar offcanvas for consistency
+
+### Next Steps
+- Test the Task Details offcanvas close functionality
+- Verify that Calendar offcanvas close also works properly 
+
+---
+
+## Scratchpad - Automatic Task Notification Marking
+
+### Problem Analysis
+- When users open a task offcanvas for the first time, notifications for that task should be automatically marked as read
+- Currently, users need to manually mark notifications as read
+- This creates a poor user experience as users expect notifications to be marked as read when they view the related content
+
+### Root Cause
+1. No automatic notification marking when task details are viewed
+2. Notifications remain unread even after user has seen the task content
+3. No tracking mechanism to prevent duplicate marking
+
+### Solution Plan
+1. ✅ Add automatic notification marking when task offcanvas is opened
+2. ✅ Implement session-based tracking to prevent duplicate marking
+3. ✅ Update task row styling to remove "new access" indicators
+4. ✅ Update notification counter in header
+5. ✅ Test the functionality
+
+### Files Modified
+- ✅ `tasks.php` - Added markTaskNotificationsAsRead function and integration
+- ✅ `mark_notifications_read.php` - Added task-specific notification marking support
+
+### Implementation Completed
+1. ✅ Created `markTaskNotificationsAsRead(taskId)` global function
+2. ✅ Added session storage tracking to prevent duplicate marking
+3. ✅ Integrated notification marking into `loadTaskDetails()` function
+4. ✅ Added task-specific notification marking in PHP backend
+5. ✅ Added visual feedback by removing "new access" indicators
+6. ✅ Added notification counter update functionality
+
+### Technical Details
+- Uses sessionStorage to track viewed tasks and prevent duplicate marking
+- Marks notifications that match pattern "added to task #X" for the specific task
+- Updates task row styling to remove table-warning class and new access badges
+- Integrates with existing notification counter update system
+- Handles errors gracefully with console logging
+
+### Next Steps
+- Test the automatic notification marking functionality
+- Verify that notifications are marked as read only on first view
+- Ensure notification counter updates correctly
+- Test with multiple tasks and different notification types
+
+---
+
+## Scratchpad - Header Notification Dropdown Enhancement
+
+### Problem Analysis
+- Header notification dropdown was using jQuery instead of modern JavaScript
+- Individual notification marking functionality needed improvement
+- Notification counter wasn't updating properly when notifications were marked as read
+- Need to ensure consistent behavior across the application
+
+### Root Cause
+1. jQuery dependency in notification functions
+2. No immediate visual feedback when marking notifications as read
+3. Inconsistent notification counter updates
+4. Missing global function for notification counter updates
+
+### Solution Plan
+1. ✅ Convert jQuery functions to modern JavaScript (fetch)
+2. ✅ Improve individual notification marking with immediate visual feedback
+3. ✅ Add global updateNotificationCounter function
+4. ✅ Update dropdown toggle functions to use modern JavaScript
+5. ✅ Test the enhanced functionality
+
+### Files Modified
+- ✅ `views/header-sidebar.php` - Updated notification functions to use modern JavaScript
+
+### Implementation Completed
+1. ✅ Converted `markNotificationAsRead()` to use fetch API
+2. ✅ Converted `loadNotifications()` to use fetch API
+3. ✅ Converted `markAllAsRead()` to use fetch API
+4. ✅ Added immediate visual feedback when marking notifications as read
+5. ✅ Added global `updateNotificationCounter()` function
+6. ✅ Updated dropdown toggle functions to use modern JavaScript
+7. ✅ Improved error handling and logging
+
+### Technical Details
+- Replaced jQuery AJAX calls with fetch API
+- Added immediate DOM updates for better user experience
+- Created reusable `updateNotificationCounter()` function
+- Improved error handling with proper catch blocks
+- Maintained backward compatibility with existing functionality
+- Enhanced visual feedback for notification status changes
+
+### Next Steps
+- Test the header notification dropdown functionality
+- Verify that individual notifications can be marked as read
+- Ensure notification counter updates correctly
+- Test "Mark all as read" functionality
+- Verify integration with task notification marking 
+
+---
+
+## Scratchpad - Archive Status Implementation
+
+### Problem Analysis
+- Need to add archive status to tasks system
+- Archived tasks should not show in default view
+- Users should be able to filter to see archived tasks
+- Archive button should be available for each task
+- Archived tasks should have distinct visual styling
+- **NEW**: When tasks are archived, need unarchive button to change status back to "In Progress"
+
+### Root Cause
+1. No archive status in task system
+2. All tasks show in default view regardless of status
+3. No way to archive tasks
+4. Missing archive status in all related files
+5. **NEW**: No unarchive functionality for archived tasks
+
+### Solution Plan
+1. ✅ Add "Archived" status (value 4) to status options
+2. ✅ Update main query to exclude archived tasks by default
+3. ✅ Add archive button to task actions
+4. ✅ Update filter system to handle archived status
+5. ✅ Update all status mappings to include archived
+6. ✅ Add archive functionality with confirmation dialog
+7. ✅ Update calendar to exclude archived tasks
+8. ✅ Add proper CSS styling for archived status
+9. ✅ **NEW**: Add unarchive button for archived tasks
+10. ✅ **NEW**: Add unarchive functionality to change status to "In Progress"
+11. ✅ **NEW**: Update event listeners to handle unarchive buttons
+12. ✅ **NEW**: Fix duplicate event listener issues
+
+### Files Modified
+- ✅ `tasks.php` - Added archive status, button, and functionality
+- ✅ `filter_tasks.php` - Updated to exclude archived tasks by default
+- ✅ `get_task_details.php` - Added archived status mapping
+- ✅ `update_task.php` - Added archived status to notifications
+- ✅ `get_calendar_events.php` - Excluded archived tasks from calendar
+
+### Implementation Completed
+1. ✅ Added "Archived" option to status filter dropdown
+2. ✅ Updated main task query to exclude archived tasks (status != 4) by default
+3. ✅ Added archive button with archive icon to task actions
+4. ✅ Updated status mappings to include archived status with dark badge
+5. ✅ Added archiveTask() function with confirmation dialog
+6. ✅ Updated event listeners to handle archive button clicks
+7. ✅ Updated filter system to show archived tasks only when specifically filtered
+8. ✅ Updated calendar to exclude archived tasks from display
+9. ✅ Added proper CSS styling for badge-dark class
+10. ✅ Updated all related files to handle archived status consistently
+11. ✅ **NEW**: Added conditional display of archive/unarchive buttons based on task status
+12. ✅ **NEW**: Added unarchiveTask() function to change status to "In Progress"
+13. ✅ **NEW**: Added unarchive button event listeners
+14. ✅ **NEW**: Fixed duplicate event listener issues by consolidating into attachEventListeners()
+15. ✅ **NEW**: Updated row click prevention to handle unarchive buttons
+
+### Technical Details
+- Archive status value: 4
+- Archive status text: "Archived"
+- Archive status badge: dark (gray) color
+- Archive button: dark button with archive icon
+- **NEW**: Unarchive button: green button with undo icon
+- **NEW**: Unarchive status: changes to "In Progress" (value 1)
+- Default behavior: archived tasks are hidden
+- Filter behavior: archived tasks only show when status filter is set to "Archived"
+- Calendar: archived tasks are excluded from calendar view
+- Notifications: archive status changes trigger notifications
+- **NEW**: Conditional button display based on task status
+- **NEW**: Proper event listener management to prevent conflicts
+
+### User Experience
+- Users can archive tasks using the archive button
+- Confirmation dialog prevents accidental archiving
+- Archived tasks are hidden from default view
+- Users can view archived tasks by selecting "Archived" in status filter
+- Archive button is visually distinct with dark styling
+- Success notifications confirm archive actions
+- **NEW**: Users can unarchive tasks using the unarchive button
+- **NEW**: Unarchived tasks are moved to "In Progress" status
+- **NEW**: Unarchive button is green with undo icon for clear visual distinction
+
+### Next Steps
+- ✅ Test the archive functionality
+- ✅ Verify that archived tasks don't appear in default view
+- ✅ Test that archived tasks appear when filtered
+- ✅ Verify archive button works correctly
+- ✅ Test that archived tasks are excluded from calendar
+- ✅ Ensure notifications work for archive status changes
+- **NEW**: Test unarchive functionality
+- **NEW**: Verify unarchive button appears for archived tasks
+- **NEW**: Test that unarchived tasks move to "In Progress" status
+- **NEW**: Ensure proper button switching between archive/unarchive states 
+
+---
+
+## Scratchpad - Notification Badge Styling Fix
+
+### Problem Analysis
+- Notification badge over bell icon was not properly centered and positioned
+- Badge positioning was inconsistent and not visually appealing
+- Text within badge was not perfectly centered
+- Badge size and spacing needed improvement
+
+### Root Cause
+1. Conflicting CSS styles between headin2.php and header-sidebar.php
+2. Inconsistent positioning values (top/right offsets)
+3. Missing visual enhancements like shadow and border
+4. Insufficient z-index for proper layering
+
+### Solution Plan
+1. ✅ Updated notification badge styles in headin2.php
+2. ✅ Updated message badge styles in header-sidebar.php to match
+3. ✅ Added specific notification badge styles in header-sidebar.php
+4. ✅ Improved positioning, sizing, and visual appearance
+
+### Files Modified
+- ✅ `views/headin2.php` - Updated notification badge styles
+- ✅ `views/header-sidebar.php` - Updated message badge styles and added specific notification badge styles
+
+### Implementation Completed
+1. ✅ Improved badge positioning:
+   - Changed top/right from -5px to -8px for better positioning
+   - Increased badge size from 18px to 20px for better visibility
+2. ✅ Enhanced visual appearance:
+   - Added white border (2px solid white) for better contrast
+   - Added box shadow for depth and visual appeal
+   - Increased font weight to 600 for better readability
+   - Improved font size to 0.75rem
+3. ✅ Better text centering:
+   - Added line-height: 1 for perfect vertical centering
+   - Used flexbox with align-items: center and justify-content: center
+   - Added padding: 0 4px for proper text spacing
+4. ✅ Added z-index: 10 to ensure badge appears above other elements
+5. ✅ Ensured notification-icon has position: relative for proper badge positioning
+
+### Technical Details
+- Badge positioning: top: -8px, right: -8px
+- Badge size: min-width: 20px, height: 20px
+- Font: 0.75rem, font-weight: 600
+- Visual enhancements: white border, box shadow, z-index
+- Perfect centering using flexbox properties
+- Consistent styling across notification and message badges
+
+### User Experience
+- Notification badge is now perfectly centered over the bell icon
+- Better visual contrast with white border and shadow
+- Improved readability with larger, bolder text
+- Consistent appearance across all badge types
+- Professional and polished look
+
+### Next Steps
+- Test the notification badge display with different notification counts
+- Verify that the badge appears correctly on different screen sizes
+- Ensure the badge positioning works well with the dropdown functionality
+- Test with both single and double-digit numbers 
+
+---
+
+## Scratchpad - Task Print Functionality Implementation
+
+### Problem Analysis
+- Need to add print button for each task
+- When clicked, should show a print page with all task information
+- Print page should include all task details, checklists, notes, files, and document links
+- Should be printer-friendly with proper formatting
+- Need to check for JavaScript variable conflicts
+
+### Root Cause
+1. No print functionality in task system
+2. Users need to manually copy task information for printing
+3. No comprehensive task report generation
+4. Missing printer-friendly layout for task details
+
+### Solution Plan
+1. ✅ Add print button to each task row in actions column
+2. ✅ Add print button to filtered results table
+3. ✅ Create printTask() function to handle print functionality
+4. ✅ Create createPrintContent() function to generate print HTML
+5. ✅ Add print button event listeners
+6. ✅ Update row click prevention to exclude print button
+7. ✅ Add CSS styling for print button
+8. ✅ Test print functionality with all task data
+
+### Files Modified
+- ✅ `tasks.php` - Added print button, functions, and event listeners
+
+### Implementation Completed
+1. ✅ Added print button with print icon to each task row:
+   - Blue info button with print icon
+   - Positioned between edit and archive buttons
+   - Added to both main table and filtered results
+2. ✅ Created printTask() function:
+   - Shows loading dialog while fetching task data
+   - Fetches complete task details from get_task_details.php
+   - Opens new window with formatted content
+   - Automatically triggers print dialog
+   - Handles errors gracefully
+3. ✅ Created createPrintContent() function:
+   - Generates complete HTML page for printing
+   - Includes all task information (title, status, priority, dates, etc.)
+   - Shows progress bar with completion percentage
+   - Displays hierarchical checklists with completion status
+   - Lists all notes with user information and timestamps
+   - Shows attached files with metadata
+   - Lists document links with descriptions
+   - Shows assigned team members
+   - Includes printer-friendly CSS styling
+   - Adds page breaks for better print layout
+4. ✅ Added print button event listeners:
+   - Integrated into attachEventListeners() function
+   - Prevents event bubbling to avoid opening task details
+   - Added to both initial page load and filtered results
+5. ✅ Updated row click prevention:
+   - Added print-task class to exclusion list
+   - Prevents task details from opening when clicking print button
+6. ✅ Added CSS styling:
+   - Styled print button with proper hover effects
+   - Consistent with other action buttons
+7. ✅ Print page features:
+   - Professional header with task title and status badges
+   - Progress section showing completion percentage
+   - Organized sections for different types of information
+   - Hierarchical checklist display with completion indicators
+   - Notes section with user attribution and timestamps
+   - Files and document links with metadata
+   - Team member list
+   - Footer with generation timestamp
+   - Print-specific CSS for optimal printing
+
+### Technical Details
+- Print button: Blue info button with print icon
+- Print function: Fetches task data and opens new window
+- Print content: Complete HTML page with all task information
+- Print styling: Optimized for paper printing with proper margins and breaks
+- Event handling: Prevents conflicts with task detail opening
+- Error handling: Shows user-friendly error messages
+- Data inclusion: All task fields, checklists, notes, files, documents, users
+
+### Print Page Sections
+1. **Header**: Task title, status, and priority badges
+2. **Progress**: Visual progress bar with completion percentage
+3. **Task Information**: All basic task details in organized grid
+4. **Assigned Team**: List of team members with roles
+5. **Checklist Items**: Hierarchical checklist with completion status
+6. **Notes**: All notes with user attribution and timestamps
+7. **Attached Files**: File list with metadata
+8. **Document Links**: Link list with descriptions
+9. **Footer**: Generation timestamp and system branding
+
+### User Experience
+- Click print button to generate comprehensive task report
+- Loading dialog shows while preparing print content
+- New window opens with formatted content ready for printing
+- Automatic print dialog appears
+- Print layout optimized for paper printing
+- All task information included in single report
+- Professional appearance suitable for sharing
+
+### Next Steps
+- Test print functionality with different task types
+- Verify all task data is included in print output
+- Test print layout on different browsers
+- Ensure print quality is suitable for professional use
+- Verify no JavaScript conflicts with existing functionality 
+
+---
+
+## Scratchpad - Message Pin Function Implementation
+
+### Problem Analysis
+- Need to add pin functionality for messages in the chat system
+- Users should be able to pin important messages at the top of the conversation
+- Pinned messages should be visually distinct and appear at the top
+- Users should be able to unpin messages as well
+- Pin status should be persistent and shared between users in the conversation
+
+### Root Cause
+1. No pin functionality in the chat system
+2. Messages are only ordered by creation date
+3. No way to highlight or prioritize important messages
+4. Missing visual indicators for pinned messages
+5. No database support for pin status
+
+### Solution Plan
+1. ✅ Add is_pinned column to messages table
+2. ✅ Create migration script for database changes
+3. ✅ Update chat_actions.php to handle pin/unpin actions
+4. ✅ Update message retrieval to order by pin status first
+5. ✅ Add pin/unpin buttons to message actions
+6. ✅ Add visual styling for pinned messages
+7. ✅ Add pin/unpin JavaScript functions
+8. ✅ Add success/error notifications
+9. ✅ Test the pin functionality
+
+### Files Modified
+- ✅ `sql/add_pin_to_messages.sql` - Database migration SQL
+- ✅ `run_pin_migration.php` - Migration script
+- ✅ `chat_actions.php` - Added pin/unpin functionality and updated message retrieval
+- ✅ `views/header-sidebar.php` - Added pin UI, functions, and styling
+
+### Implementation Completed
+1. ✅ Added is_pinned BOOLEAN column to messages table with proper indexing
+2. ✅ Created migration script for easy database setup
+3. ✅ Added pin_message and unpin_message cases to chat_actions.php:
+   - Proper permission checking (user must be sender or receiver)
+   - Database updates for pin status
+   - Error handling and validation
+4. ✅ Updated get_messages case to:
+   - Order messages by pin status first (pinned at top), then by creation date
+   - Include is_pinned field in response
+5. ✅ Added pin/unpin buttons to message actions:
+   - Thumbtack icon that rotates when pinned
+   - Different styling for pinned vs unpinned state
+   - Proper onclick handlers
+6. ✅ Added visual styling for pinned messages:
+   - Gold border and gradient background
+   - Pinned indicator with thumbtack icon
+   - Different styling for sent vs received pinned messages
+7. ✅ Added pinMessage() and unpinMessage() JavaScript functions:
+   - AJAX calls to backend
+   - Success/error notifications using SweetAlert
+   - Automatic message reload after pin/unpin
+8. ✅ Added comprehensive CSS styling:
+   - Pinned message borders and backgrounds
+   - Pinned indicator styling
+   - Hover effects for pin buttons
+   - Responsive design for all screen sizes
+
+### Technical Details
+- Database column: `is_pinned BOOLEAN DEFAULT FALSE`
+- Message ordering: `ORDER BY is_pinned DESC, created_at ASC`
+- Permission check: User must be sender or receiver of the message
+- Visual indicators: Gold border, gradient background, thumbtack icon
+- Pin button: Rotates 45 degrees when pinned, changes color
+- Notifications: SweetAlert for success/error feedback
+- Real-time updates: Messages reload automatically after pin/unpin
+
+### User Experience
+- Users can pin any message in a conversation by clicking the thumbtack button
+- Pinned messages appear at the top with distinct gold styling
+- Pin button shows visual feedback (rotation and color change)
+- Success notifications confirm pin/unpin actions
+- Pinned status is shared between all users in the conversation
+- Unpinning removes the message from the top and returns it to chronological order
+
+### Next Steps
+- Test the pin functionality with different message types (text, voice, file)
+- Verify pin status persists across page refreshes
+- Test pin functionality in different browsers
+- Ensure pin buttons work correctly in fullscreen chat mode
+- Verify pin status is properly shared between users
+- Test edge cases (pinning/unpinning same message multiple times) 

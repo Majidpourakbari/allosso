@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'show'])
@@ -28,8 +29,12 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-Route::get('/dashboard', function () {
+Route::get('/dashboard', function (Request $request) {
+    // Get platform from session
+    $platform = $request->session()->get('platform');
+    
     return view('dashboard', [
         'user' => auth()->user(),
+        'platform' => $platform,
     ]);
 })->middleware('auth')->name('dashboard');

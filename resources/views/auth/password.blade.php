@@ -14,6 +14,14 @@
 <section class="login_register">
     <div class="content-place">
         <div class="form-place">
+            @if(isset($platform) && $platform)
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <img src="{{ asset('assets/allologos/' . $platform['logo']) }}" alt="{{ $platform['name'] }}" style="max-width: 200px; max-height: 80px; object-fit: contain; margin-bottom: 16px;">
+                    <div style="color: #1b1b18; font-size: 1rem; font-weight: 500; margin-top: 12px;">
+                        {{ $platform['message'] }}
+                    </div>
+                </div>
+            @endif
             <div class="welcome">
                 Enter Password
             </div>

@@ -152,7 +152,21 @@
                     {{ session('status') }}
                 </div>
             @endif
+            @if(isset($platform) && $platform)
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <img src="{{ asset('assets/allologos/' . $platform['logo']) }}" alt="{{ $platform['name'] }}" style="max-width: 200px; max-height: 80px; object-fit: contain; margin-bottom: 16px;">
+                    <div style="color: #1b1b18; font-size: 1rem; font-weight: 500; margin-top: 12px;">
+                        {{ $platform['message'] }}
+                    </div>
+                </div>
+            @endif
             <ul class="access-list">
+                @php
+                    $showAll = !isset($platform) || !$platform;
+                    $platformDomain = isset($platform) && $platform ? $platform['domain'] : null;
+                @endphp
+
+                @if($showAll || $platformDomain === 'allolancer.com')
                 <li class="access-item">
                     <div class="access-label">
                         <span class="access-icon" aria-hidden="true">
@@ -165,6 +179,9 @@
                     </div>
                     <a class="access-action" href="#" onclick="handleLogin('https://allolancer.com/allosso.php', event); return false;">Login</a>
                 </li>
+                @endif
+
+                @if($showAll)
                 <li class="access-item">
                     <div class="access-label">
                         <span class="access-icon" aria-hidden="true">
@@ -188,8 +205,9 @@
                     </div>
                     <a class="access-action" href="#" onclick="handleLogin('https://allo-learn.com', event); return false;">Login</a>
                 </li>
+                @endif
 
-                @if($user->access_erp ?? false)
+                @if($showAll && ($user->access_erp ?? false))
                 <li class="access-item">
                     <div class="access-label">
                         <span class="access-icon" aria-hidden="true">
@@ -205,7 +223,7 @@
                 </li>
                 @endif
 
-                @if($user->access_admin_portal ?? false)
+                @if($showAll && ($user->access_admin_portal ?? false))
                 <li class="access-item">
                     <div class="access-label">
                         <span class="access-icon" aria-hidden="true">
@@ -221,7 +239,7 @@
                 </li>
                 @endif
 
-                @if($user->access_ai_developer ?? false)
+                @if($showAll && ($user->access_ai_developer ?? false))
                 <li class="access-item">
                     <div class="access-label">
                         <span class="access-icon" aria-hidden="true">
@@ -233,6 +251,20 @@
                         <span class="badge-exclusive">Exclusive Access</span>
                     </div>
                     <a class="access-action" href="#" onclick="handleLogin('https://ai-dev.allosso.com', event); return false;">Login</a>
+                </li>
+                @endif
+
+                @if(isset($platform) && $platform && $platformDomain === 'alloai.com')
+                <li class="access-item">
+                    <div class="access-label">
+                        <span class="access-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4v16M4 12h16" stroke="#ff7a00" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        AlloAI
+                    </div>
+                    <a class="access-action" href="#" onclick="handleLogin('https://alloai.com', event); return false;">Login</a>
                 </li>
                 @endif
             </ul>

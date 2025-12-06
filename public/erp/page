@@ -1,0 +1,16 @@
+<?php include 'views/headin2.php' ?>
+
+
+<div class="dashboard-container">
+    <?php include 'views/header-sidebar.php' ?>
+        <!-- Dashboard Cards -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Broadcast</h4>
+            </div>
+            <div class="card-body">
+        </div>
+    </div>
+</div>
+
+<?php include 'views/footer-dashboard.php' ?>

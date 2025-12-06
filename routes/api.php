@@ -9,5 +9,8 @@ Route::prefix('v1')->middleware('api.key')->group(function () {
     
     Route::get('/check-allohash', [AuthApiController::class, 'checkAllohash'])
         ->name('api.check.allohash');
+    
+    Route::post('/external-auth', [AuthApiController::class, 'externalAuth'])
+        ->name('api.external.auth');
 });
 

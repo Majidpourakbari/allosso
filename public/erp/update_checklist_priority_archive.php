@@ -1,0 +1,116 @@
+<?php
+require_once 'controlls/db/functions.php';
+
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    exit;
+}
+
+try {
+    $checklistId = $_POST['checklist_id'] ?? null;
+    $priority = $_POST['priority'] ?? null;
+    $archiveStatus = $_POST['archive_status'] ?? null;
+
+    if (!$checklistId) {
+        throw new Exception('Checklist ID is required');
+    }
+
+    // Validate priority if provided
+    if ($priority !== null && !in_array($priority, ['1', '2', '3', '4'])) {
+        throw new Exception('Invalid priority value. Must be 1 (Low), 2 (Medium), 3 (High), or 4 (Critical)');
+    }
+
+    // Validate archive status if provided
+    if ($archiveStatus !== null && !in_array($archiveStatus, ['0', '1'])) {
+        throw new Exception('Invalid archive status. Must be 0 (Active) or 1 (Archived)');
+    }
+
+    // Build update query dynamically
+    $updateFields = [];
+    $params = [];
+
+    if ($priority !== null) {
+        $updateFields[] = 'priority = ?';
+        $params[] = $priority;
+    }
+
+    if ($archiveStatus !== null) {
+        $updateFields[] = 'archive_status = ?';
+        $params[] = $archiveStatus;
+    }
+
+    if (empty($updateFields)) {
+        throw new Exception('No fields to update');
+    }
+
+    $params[] = $checklistId;
+
+    $sql = "UPDATE tasks_checklists SET " . implode(', ', $updateFields) . " WHERE id = ?";
+    
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+    } catch (PDOException $e) {
+        // Check if the error is due to missing columns
+        if (strpos($e->getMessage(), 'Unknown column') !== false) {
+            throw new Exception('Database columns not found. Please run the migration script first: php run_checklist_priority_migration.php');
+        }
+        throw $e;
+    }
+
+    if ($stmt->rowCount() > 0) {
+        // Get task info for notification
+        $taskStmt = $conn->prepare("
+            SELECT tc.content, t.id as task_id, t.title, u.name as user_name 
+            FROM tasks_checklists tc 
+            JOIN tasks t ON tc.task_id = t.id 
+            JOIN users u ON u.id = ? 
+            WHERE tc.id = ?
+        ");
+        $taskStmt->execute([$my_profile_id, $checklistId]);
+        $taskInfo = $taskStmt->fetch(PDO::FETCH_OBJ);
+
+        if ($taskInfo) {
+            // Get task users for notification
+            $task_users_stmt = $conn->prepare("SELECT DISTINCT user_id FROM task_users WHERE task_id = ?");
+            $task_users_stmt->execute([$taskInfo->task_id]);
+            $task_users = $task_users_stmt->fetchAll(PDO::FETCH_COLUMN);
+            
+            // Get task creator
+            $task_creator_stmt = $conn->prepare("SELECT user_creator FROM tasks WHERE id = ?");
+            $task_creator_stmt->execute([$taskInfo->task_id]);
+            $task_creator = $task_creator_stmt->fetch(PDO::FETCH_COLUMN);
+            
+            // Add creator to the list if not already included
+            if ($task_creator && !in_array($task_creator, $task_users)) {
+                $task_users[] = $task_creator;
+            }
+
+            // Create notification message
+            $notification_message = "";
+            if ($priority !== null) {
+                $priorityText = ['1' => 'Low', '2' => 'Medium', '3' => 'High', '4' => 'Critical'][$priority];
+                $notification_message .= "{$taskInfo->user_name} changed priority of checklist item in task #{$taskInfo->task_id} - {$taskInfo->title} to: {$priorityText}. ";
+            }
+            if ($archiveStatus !== null) {
+                $archiveText = $archiveStatus == '1' ? 'Archived' : 'Activated';
+                $notification_message .= "{$taskInfo->user_name} {$archiveText} checklist item in task #{$taskInfo->task_id} - {$taskInfo->title}. ";
+            }
+
+            if ($notification_message) {
+                $receiver_ids = implode(',', $task_users);
+                $notification_stmt = $conn->prepare("INSERT INTO notifications (user_id, receiver_ids, message, date, time, users_read) VALUES (?, ?, ?, ?, ?, ?)");
+                $notification_stmt->execute([$my_profile_id, $receiver_ids, $notification_message, date('Y-m-d'), date('H:i:s'), $my_profile_id]);
+            }
+        }
+
+        echo json_encode(['success' => true, 'message' => 'Checklist updated successfully']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No changes made to the checklist']);
+    }
+
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+} 

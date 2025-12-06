@@ -326,3 +326,4 @@ bash deploy.sh
 
 **نکته مهم:** همیشه قبل از deployment، backup بگیرید!
 
+

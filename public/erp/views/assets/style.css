@@ -1,0 +1,88 @@
+
+@font-face {
+    font-family: YekanBakhRegular;
+    src: url(fonts/YekanBakhRegular.ttf);
+  }
+
+  @font-face {
+    font-family: YekanBakhBold;
+    src: url(fonts/YekanBakhBold.ttf);
+  }
+
+  @font-face {
+    font-family: modlight;
+    src: url(fonts/mod-light.ttf);
+  }
+
+  @font-face {
+    font-family: modbold;
+    src: url(fonts/mod-bold.ttf);
+  }
+
+  @font-face {
+    font-family: vazir1;
+    src: url(fonts/vazir1.ttf);
+  }
+
+  @font-face {
+    font-family: vazir2;
+    src: url(fonts/vazir2.ttf);
+  }
+
+  @font-face {
+    font-family: vazir3;
+    src: url(fonts/vazir3.ttf);
+  }
+
+  @font-face {
+    font-family: modbold;
+    src: url(fonts/mod-bold.ttf);
+  }
+
+  @font-face {
+      font-family: is;
+      src: url(fonts/is.ttf);
+  }
+
+
+  @font-face {
+    font-family: isbol;
+    src: url(fonts/isbol.ttf);
+}
+
+@font-face {
+    font-family: kalame1;
+    src: url(fonts/kalame1.ttf);
+  }
+
+  @font-face {
+    font-family: kalame2;
+    src: url(fonts/kalame1.ttf);
+  }
+
+  @font-face {
+    font-family: kalame3;
+    src: url(fonts/kalame3.ttf);
+  }
+
+body{
+    direction: ltr;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color:#232323;
+}
+
+a{
+    text-decoration: none;
+    color:#F59421;
+}
+
+a:hover{
+    text-decoration: none;
+    color:#f52121;
+}
+
+
+@media screen and (max-width: 500px) {
+
+}

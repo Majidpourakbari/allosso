@@ -219,9 +219,18 @@
 <body>
     <div class="auth-shell">
         <section class="auth-panel">
-            <div class="brand" style="text-align: center; margin-bottom: 24px;">
-                <h1 style="font-size: clamp(2rem, 3.8vw, 2.7rem); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0;">Allo<span style="color: var(--color-accent);">SSO</span></h1>
-            </div>
+            @if(isset($platform) && $platform)
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <img src="{{ asset('assets/allologos/' . $platform['logo']) }}" alt="{{ $platform['name'] }}" style="max-width: 200px; max-height: 80px; object-fit: contain; margin-bottom: 16px;">
+                    <div style="color: rgba(226, 232, 255, 0.9); font-size: 1rem; font-weight: 500; margin-top: 12px;">
+                        {{ $platform['message'] }}
+                    </div>
+                </div>
+            @else
+                <div class="brand" style="text-align: center; margin-bottom: 24px;">
+                    <h1 style="font-size: clamp(2rem, 3.8vw, 2.7rem); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0;">Allo<span style="color: var(--color-accent);">SSO</span></h1>
+                </div>
+            @endif
             <header class="panel-header">
                 <h2>Complete Registration</h2>
                 <p class="email-display">{{ $email }}</p>
