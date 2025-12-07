@@ -26,6 +26,7 @@ class User extends Authenticatable
         'access_erp',
         'access_admin_portal',
         'access_ai_developer',
+        'allolancer_account_type',
     ];
 
     /**

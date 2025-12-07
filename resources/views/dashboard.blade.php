@@ -9,6 +9,41 @@
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
     <style>
+        @media screen and (max-width: 991.98px) {
+            .login_register .content-place {
+                width: 100% !important;
+                padding: 0 !important;
+            }
+            .login_register .content-place .form-place {
+                width: 100% !important;
+                padding: 2rem 1rem !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+            }
+        }
+        @media screen and (max-width: 767.98px) {
+            .login_register .content-place {
+                width: 100% !important;
+                height: 100vh !important;
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                padding: 0 !important;
+            }
+            .login_register .content-place .form-place {
+                width: 100% !important;
+                padding: 2rem 1rem !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+            }
+        }
+        @media screen and (max-width: 575.98px) {
+            .login_register .content-place .form-place {
+                width: 100% !important;
+                padding: 2rem 1rem !important;
+            }
+        }
         .access-list {
             list-style: none;
             padding: 0;
@@ -130,6 +165,67 @@
             margin-bottom: 24px;
         }
         @endif
+        .explore-more-section {
+            margin-top: 48px;
+            padding: 24px;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .explore-more-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1b1b18;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .logo-slider-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding: 20px 0;
+        }
+        .logo-slider-track {
+            display: flex;
+            gap: 24px;
+            animation: slide 30s linear infinite;
+        }
+        .logo-slider-track:hover {
+            animation-play-state: paused;
+        }
+        .logo-slide-item {
+            flex-shrink: 0;
+            width: 120px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            border-radius: 8px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.02);
+        }
+        .logo-slide-item:hover {
+            transform: scale(1.05);
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .logo-slide-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        @keyframes slide {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        .logo-slider-track.duplicate {
+            animation: slide 30s linear infinite;
+        }
     </style>
 </head>
 <body>
@@ -189,9 +285,9 @@
                                 <path d="M12 3 4 9v12h6v-6h4v6h6V9l-8-6Z" stroke="#8ce9b6" stroke-width="1.5" stroke-linejoin="round"/>
                             </svg>
                         </span>
-                        allohubai.com
+                        allo-ai.io
                     </div>
-                    <a class="access-action" href="#" onclick="handleLogin('https://allohubai.com', event); return false;">Login</a>
+                    <a class="access-action" href="#" onclick="handleLogin('https://allo-ai.io', event); return false;">Login</a>
                 </li>
                 <li class="access-item">
                     <div class="access-label">
@@ -201,9 +297,20 @@
                                 <path d="M9 6v10" stroke="#9cc9ff" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
                         </span>
-                        allo-learn.com
+                        alloacademy.se
                     </div>
-                    <a class="access-action" href="#" onclick="handleLogin('https://allo-learn.com', event); return false;">Login</a>
+                    <a class="access-action" href="#" onclick="handleLogin('https://alloacademy.se', event); return false;">Login</a>
+                </li>
+                <li class="access-item">
+                    <div class="access-label">
+                        <span class="access-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 3 4 9v12h6v-6h4v6h6V9l-8-6Z" stroke="#8ce9b6" stroke-width="1.5" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        allomeet.com
+                    </div>
+                    <a class="access-action" href="#" onclick="handleLogin('https://allomeet.com', event); return false;">Login</a>
                 </li>
                 @endif
 
@@ -268,6 +375,72 @@
                 </li>
                 @endif
             </ul>
+
+            @if(isset($platform) && $platform)
+                @php
+                    $allPlatforms = [
+                        [
+                            'name' => 'AlloLancer',
+                            'domain' => 'allolancer.com',
+                            'logo' => 'allolaner.jpg',
+                            'url' => 'https://allolancer.com/allosso.php'
+                        ],
+                        [
+                            'name' => 'AlloAI',
+                            'domain' => 'alloai.com',
+                            'logo' => 'alloai.jpg',
+                            'url' => 'https://allo-ai.io'
+                        ],
+                        [
+                            'name' => 'AlloAcademy',
+                            'domain' => 'alloacademy.se',
+                            'logo' => 'alloacademy.jpg',
+                            'url' => 'https://alloacademy.se'
+                        ],
+                        [
+                            'name' => 'AlloMeet',
+                            'domain' => 'allomeet.com',
+                            'logo' => 'allomeet.jpg',
+                            'url' => 'https://allomeet.com'
+                        ]
+                    ];
+                    
+                    $currentDomain = $platform['domain'];
+                    // Filter out current platform - match by domain
+                    $otherPlatforms = array_filter($allPlatforms, function($p) use ($currentDomain) {
+                        // Match exact domain or check if domains are related (e.g., alloai.com vs allo-ai.io)
+                        if ($p['domain'] === $currentDomain) {
+                            return false;
+                        }
+                        // Handle alloai.com and allo-ai.io as same platform
+                        if (($p['domain'] === 'alloai.com' || $p['domain'] === 'allo-ai.io') && 
+                            ($currentDomain === 'alloai.com' || $currentDomain === 'allo-ai.io')) {
+                            return false;
+                        }
+                        return true;
+                    });
+                @endphp
+
+                @if(count($otherPlatforms) > 0)
+                <div class="explore-more-section">
+                    <div class="explore-more-title">Explore More</div>
+                    <div class="logo-slider-container">
+                        <div class="logo-slider-track">
+                            @foreach($otherPlatforms as $otherPlatform)
+                                <div class="logo-slide-item" onclick="handleLogin('{{ $otherPlatform['url'] }}', event);" title="{{ $otherPlatform['name'] }}">
+                                    <img src="{{ asset('assets/allologos/' . $otherPlatform['logo']) }}" alt="{{ $otherPlatform['name'] }}">
+                                </div>
+                            @endforeach
+                            @foreach($otherPlatforms as $otherPlatform)
+                                <div class="logo-slide-item" onclick="handleLogin('{{ $otherPlatform['url'] }}', event);" title="{{ $otherPlatform['name'] }}">
+                                    <img src="{{ asset('assets/allologos/' . $otherPlatform['logo']) }}" alt="{{ $otherPlatform['name'] }}">
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+            @endif
         </div>
     </div>
     <div class="img-back-place">
@@ -275,6 +448,101 @@
     </div>
 </section>
 
+@php
+    $showAccountTypeModal = false;
+    if (isset($platform) && $platform && $platform['domain'] === 'allolancer.com') {
+        $user = auth()->user();
+        // Show modal if user hasn't selected account type yet
+        if ($user && !$user->allolancer_account_type) {
+            $showAccountTypeModal = true;
+        }
+    }
+@endphp
+
+@if($showAccountTypeModal)
+<!-- Account Type Selection Modal -->
+<div id="accountTypeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+    <div style="background: #fff; border-radius: 12px; padding: 32px; max-width: 500px; width: 90%; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);">
+        <h2 style="font-size: 1.5rem; font-weight: 600; color: #1b1b18; margin-bottom: 16px; text-align: center;">Select Your Account Type</h2>
+        <p style="color: #706f6c; font-size: 0.9rem; margin-bottom: 24px; text-align: center;">Please choose your account type to continue</p>
+        
+        <form action="{{ route('allolancer.account-type') }}" method="POST" id="accountTypeForm">
+            @csrf
+            <div style="display: grid; gap: 16px; margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; padding: 20px; border: 2px solid #e9efec; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; background: #fff;">
+                    <input type="radio" name="account_type" value="freelancer" required style="margin-right: 12px; width: 20px; height: 20px; cursor: pointer;">
+                    <div>
+                        <div style="font-weight: 600; color: #1b1b18; margin-bottom: 4px;">Freelancer</div>
+                        <div style="font-size: 0.85rem; color: #706f6c;">I want to offer my services</div>
+                    </div>
+                </label>
+                
+                <label style="display: flex; align-items: center; padding: 20px; border: 2px solid #e9efec; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; background: #fff;">
+                    <input type="radio" name="account_type" value="employer" required style="margin-right: 12px; width: 20px; height: 20px; cursor: pointer;">
+                    <div>
+                        <div style="font-weight: 600; color: #1b1b18; margin-bottom: 4px;">Employer</div>
+                        <div style="font-size: 0.85rem; color: #706f6c;">I want to hire freelancers</div>
+                    </div>
+                </label>
+            </div>
+            
+            <button type="submit" style="width: 100%; padding: 14px; background: #1b1b18; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+                Continue
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    #accountTypeModal label:hover {
+        border-color: #1b1b18;
+        background: rgba(27, 27, 24, 0.02);
+    }
+    #accountTypeModal input[type="radio"]:checked + div {
+        color: #1b1b18;
+    }
+    #accountTypeModal label:has(input[type="radio"]:checked) {
+        border-color: #1b1b18;
+        background: rgba(27, 27, 24, 0.05);
+    }
+    #accountTypeModal button:hover {
+        background: #2a2a27;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('accountTypeForm');
+        const modal = document.getElementById('accountTypeModal');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    modal.style.display = 'none';
+                    window.location.reload();
+                } else {
+                    alert('An error occurred. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    });
+</script>
+@endif
 
 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/js/login.js') }}"></script>

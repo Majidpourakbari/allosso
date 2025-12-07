@@ -29,6 +29,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+Route::post('/allolancer/account-type', [AuthController::class, 'saveAllolancerAccountType'])
+    ->middleware('auth')
+    ->name('allolancer.account-type');
+
 Route::get('/dashboard', function (Request $request) {
     // Get platform from session
     $platform = $request->session()->get('platform');

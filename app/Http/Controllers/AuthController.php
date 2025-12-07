@@ -54,13 +54,13 @@ class AuthController extends Controller
                 'name' => 'AlloLancer',
                 'domain' => 'allolancer.com',
                 'logo' => 'allolaner.jpg', // Note: actual filename is allolaner.jpg
-                'message' => 'برای ورود به سایت AlloLancer باید ورود و عضویت کنید',
+                'message' => 'To access AlloLancer, please login or register',
             ],
             'alloai' => [
                 'name' => 'AlloAI',
                 'domain' => 'alloai.com',
                 'logo' => 'alloai.jpg',
-                'message' => 'برای ورود به سایت AlloAI باید ورود و عضویت کنید',
+                'message' => 'To access AlloAI, please login or register',
             ],
         ];
 
@@ -326,5 +326,20 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('auth.show');
+    }
+
+    public function saveAllolancerAccountType(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'account_type' => ['required', 'string', 'in:freelancer,employer'],
+        ]);
+
+        $user = Auth::user();
+        if ($user) {
+            $user->allolancer_account_type = $validated['account_type'];
+            $user->save();
+        }
+
+        return redirect()->route('dashboard')->with('status', 'Account type saved successfully!');
     }
 }
