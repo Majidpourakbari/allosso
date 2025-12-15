@@ -71,30 +71,44 @@ class AuthController extends Controller
 
     public function show(Request $request): View|RedirectResponse
     {
-        if (Auth::check()) {
-            return redirect()->route('dashboard');
-        }
+        try {
+            if (Auth::check()) {
+                return redirect()->route('dashboard');
+            }
 
-        // Always generate new random security code on page load
-        $characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing characters
-        $securityCode = '';
-        for ($i = 0; $i < 5; $i++) {
-            $securityCode .= $characters[random_int(0, strlen($characters) - 1)];
-        }
-        $request->session()->put('security_code', $securityCode);
+            // Always generate new random security code on page load
+            $characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing characters
+            $securityCode = '';
+            for ($i = 0; $i < 5; $i++) {
+                $securityCode .= $characters[random_int(0, strlen($characters) - 1)];
+            }
+            $request->session()->put('security_code', $securityCode);
 
-        // Store platform in session if detected
-        $platform = $this->detectPlatform($request);
-        if ($platform) {
-            $request->session()->put('platform', $platform);
-        } else {
-            $platform = $request->session()->get('platform');
-        }
+            // Store platform in session if detected
+            $platform = $this->detectPlatform($request);
+            if ($platform) {
+                $request->session()->put('platform', $platform);
+            } else {
+                $platform = $request->session()->get('platform');
+            }
 
-        return view('auth.sso', [
-            'email' => old('email', ''),
-            'platform' => $platform,
-        ]);
+            return view('auth.sso', [
+                'email' => old('email', ''),
+                'platform' => $platform,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Auth show error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            // Return a simple error view instead of crashing
+            return response()->view('errors.500', [
+                'message' => 'An error occurred. Please try again later.',
+            ], 500);
+        }
     }
 
     public function captcha(Request $request): Response
@@ -430,6 +444,13 @@ class AuthController extends Controller
     public function redirectToApple(Request $request): RedirectResponse
     {
         try {
+            // Check if Apple is configured
+            if (!config('services.apple.client_id') || !config('services.apple.team_id')) {
+                \Log::warning('Apple Sign-In not configured');
+                return redirect()->route('auth.show')
+                    ->withErrors(['error' => 'Apple Sign-In is not configured. Please contact administrator.']);
+            }
+
             $state = bin2hex(random_bytes(16));
             $request->session()->put('apple_state', $state);
             
@@ -444,6 +465,10 @@ class AuthController extends Controller
 
             return redirect()->away($authUrl);
         } catch (\Exception $e) {
+            \Log::error('Apple redirect error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return redirect()->route('auth.show')
                 ->withErrors(['error' => 'Apple authentication error: ' . $e->getMessage()]);
         }
