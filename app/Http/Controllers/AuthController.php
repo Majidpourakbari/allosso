@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Laravel\Socialite\Facades\Socialite;
@@ -461,7 +462,7 @@ class AuthController extends Controller
             $userData = $request->input('user'); // Only on first authorization
 
             // Log for debugging
-            \Log::info('Apple Callback', [
+            Log::info('Apple Callback', [
                 'has_code' => !empty($code),
                 'has_state' => !empty($state),
                 'has_user_data' => !empty($userData),
@@ -471,7 +472,7 @@ class AuthController extends Controller
             // Verify state - but be more lenient for first time users
             $sessionState = $request->session()->get('apple_state');
             if ($sessionState && $state && $state !== $sessionState) {
-                \Log::warning('Apple state mismatch', [
+                Log::warning('Apple state mismatch', [
                     'session_state' => $sessionState,
                     'received_state' => $state,
                 ]);
@@ -489,7 +490,7 @@ class AuthController extends Controller
             if (!$code) {
                 $error = $request->input('error');
                 $errorDescription = $request->input('error_description');
-                \Log::error('Apple callback error', [
+                Log::error('Apple callback error', [
                     'error' => $error,
                     'error_description' => $errorDescription,
                 ]);
@@ -504,7 +505,7 @@ class AuthController extends Controller
             $idToken = $tokens['id_token'] ?? null;
 
             if (!$idToken) {
-                \Log::error('No ID token from Apple', ['tokens' => $tokens]);
+                Log::error('No ID token from Apple', ['tokens' => $tokens]);
                 throw new \Exception('No ID token received from Apple');
             }
 
@@ -513,7 +514,7 @@ class AuthController extends Controller
             $appleId = $userInfo['apple_id'];
             $email = $userInfo['email'];
 
-            \Log::info('Apple user info', [
+            Log::info('Apple user info', [
                 'apple_id' => $appleId,
                 'has_email' => !empty($email),
             ]);
@@ -570,19 +571,19 @@ class AuthController extends Controller
                     'allohash' => $allohash,
                 ]);
 
-                \Log::info('Created new Apple user', ['user_id' => $user->id]);
+                Log::info('Created new Apple user', ['user_id' => $user->id]);
             }
 
             // Login user
             Auth::login($user);
             $request->session()->regenerate();
 
-            \Log::info('Apple login successful', ['user_id' => $user->id]);
+            Log::info('Apple login successful', ['user_id' => $user->id]);
 
             return redirect()->route('dashboard')->with('status', 'Welcome to AlloSSO!');
 
         } catch (\Exception $e) {
-            \Log::error('Apple callback exception', [
+            Log::error('Apple callback exception', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
