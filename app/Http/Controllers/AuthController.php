@@ -105,6 +105,7 @@ class AuthController extends Controller
             ]);
             
             // Return a simple error view instead of crashing
+            // Return error view
             return response()->view('errors.500', [
                 'message' => 'An error occurred. Please try again later.',
             ], 500);
