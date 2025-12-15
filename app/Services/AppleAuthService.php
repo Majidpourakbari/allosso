@@ -7,6 +7,7 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Ecdsa\Sha256;
 use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AppleAuthService
 {
@@ -15,41 +16,58 @@ class AppleAuthService
      */
     public function generateClientSecret(): string
     {
-        $teamId = config('services.apple.team_id');
-        $keyId = config('services.apple.key_id');
-        $clientId = config('services.apple.client_id');
-        $privateKey = config('services.apple.private_key');
+        try {
+            $teamId = config('services.apple.team_id');
+            $keyId = config('services.apple.key_id');
+            $clientId = config('services.apple.client_id');
+            $privateKey = config('services.apple.private_key');
 
-        if (!$teamId || !$keyId || !$clientId || !$privateKey) {
-            throw new \Exception('Apple configuration is missing. Please check your .env file.');
+            if (!$teamId || !$keyId || !$clientId || !$privateKey) {
+                throw new \Exception('Apple configuration is missing. Please check your .env file. Team ID: ' . ($teamId ? 'set' : 'missing') . ', Key ID: ' . ($keyId ? 'set' : 'missing') . ', Client ID: ' . ($clientId ? 'set' : 'missing') . ', Private Key: ' . ($privateKey ? 'set' : 'missing'));
+            }
+
+            // Replace newlines if they're escaped
+            $privateKey = str_replace('\\n', "\n", $privateKey);
+            
+            // Remove any extra whitespace
+            $privateKey = trim($privateKey);
+            
+            // Ensure proper format
+            if (!str_contains($privateKey, 'BEGIN PRIVATE KEY')) {
+                $privateKey = "-----BEGIN PRIVATE KEY-----\n" . $privateKey . "\n-----END PRIVATE KEY-----";
+            }
+
+            $now = \DateTimeImmutable::createFromFormat('U', (string) time());
+            
+            if (!$now) {
+                throw new \Exception('Failed to create DateTimeImmutable');
+            }
+
+            $configuration = Configuration::forAsymmetricSigner(
+                new Sha256(),
+                InMemory::plainText($privateKey),
+                InMemory::empty()
+            );
+
+            $builder = $configuration->builder(ChainedFormatter::default())
+                ->withHeader('kid', $keyId)
+                ->issuedBy($teamId)
+                ->issuedAt($now)
+                ->expiresAt($now->modify('+1 hour'))
+                ->withClaim('aud', 'https://appleid.apple.com')
+                ->withClaim('sub', $clientId);
+
+            $token = $builder->getToken($configuration->signer(), $configuration->signingKey());
+
+            return $token->toString();
+        } catch (\Exception $e) {
+            Log::error('Apple Client Secret Generation Error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            throw $e;
         }
-
-        // Replace newlines if they're escaped
-        $privateKey = str_replace('\\n', "\n", $privateKey);
-        
-        // Ensure proper format
-        if (!str_contains($privateKey, 'BEGIN PRIVATE KEY')) {
-            $privateKey = "-----BEGIN PRIVATE KEY-----\n" . $privateKey . "\n-----END PRIVATE KEY-----";
-        }
-
-        $now = \DateTimeImmutable::createFromFormat('U', (string) time());
-        
-        $configuration = Configuration::forAsymmetricSigner(
-            new Sha256(),
-            InMemory::plainText($privateKey),
-            InMemory::empty()
-        );
-
-        $token = $configuration->builder(ChainedFormatter::default())
-            ->withHeader('kid', $keyId)
-            ->issuedBy($teamId)
-            ->issuedAt($now)
-            ->expiresAt($now->modify('+1 hour'))
-            ->withClaim('aud', 'https://appleid.apple.com')
-            ->withClaim('sub', $clientId)
-            ->getToken($configuration->signer(), $configuration->signingKey());
-
-        return $token->toString();
     }
 
     /**
