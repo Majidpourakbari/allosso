@@ -33,6 +33,18 @@ Route::post('/allolancer/account-type', [AuthController::class, 'saveAllolancerA
     ->middleware('auth')
     ->name('allolancer.account-type');
 
+Route::get('/auth/apple', [AuthController::class, 'redirectToApple'])
+    ->name('auth.apple');
+
+Route::post('/auth/apple/callback', [AuthController::class, 'handleAppleCallback'])
+    ->name('auth.apple.callback');
+
+Route::get('/auth/apple/email', [AuthController::class, 'showAppleEmail'])
+    ->name('auth.apple.email');
+
+Route::post('/auth/apple/email', [AuthController::class, 'handleAppleEmail'])
+    ->name('auth.apple.email.submit');
+
 Route::get('/dashboard', function (Request $request) {
     // Get platform from session
     $platform = $request->session()->get('platform');

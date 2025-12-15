@@ -23,6 +23,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'allohash',
+        'apple_id',
         'access_erp',
         'access_admin_portal',
         'access_ai_developer',

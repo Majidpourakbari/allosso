@@ -29,7 +29,7 @@
                 <img src="{{ asset('assets/images/login/google.svg') }}" alt="">
                 Continue with google
             </a>
-            <a href="#" class="login-attr">
+            <a href="{{ route('auth.apple') }}" class="login-attr">
                 <img src="{{ asset('assets/images/login/dark-apple.svg') }}" alt="">
                 Continue with Apple
             </a>
