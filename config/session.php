@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'file'),
+    'driver' => env('SESSION_DRIVER', 'file'), // Changed default to file to prevent database errors
 
     /*
     |--------------------------------------------------------------------------
