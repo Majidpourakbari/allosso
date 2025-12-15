@@ -45,6 +45,12 @@ Route::get('/auth/apple/email', [AuthController::class, 'showAppleEmail'])
 Route::post('/auth/apple/email', [AuthController::class, 'handleAppleEmail'])
     ->name('auth.apple.email.submit');
 
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])
+    ->name('auth.google');
+
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
+    ->name('auth.google.callback');
+
 Route::get('/dashboard', function (Request $request) {
     // Get platform from session
     $platform = $request->session()->get('platform');

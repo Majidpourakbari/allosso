@@ -25,7 +25,7 @@
             <div class="welcome">
                 Welcome back
             </div>
-            <a href="#" class="login-attr">
+            <a href="{{ route('auth.google') }}" class="login-attr">
                 <img src="{{ asset('assets/images/login/google.svg') }}" alt="">
                 Continue with google
             </a>

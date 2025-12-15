@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Services\AppleAuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -11,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -345,99 +345,55 @@ class AuthController extends Controller
     }
 
     /**
-     * Redirect to Apple authorization page
+     * Redirect to Google authorization page
      */
-    public function redirectToApple(Request $request): RedirectResponse
+    public function redirectToGoogle(Request $request): RedirectResponse
     {
-        $state = bin2hex(random_bytes(16));
-        $request->session()->put('apple_state', $state);
-        
         // Store platform in session if exists
         $platform = $this->detectPlatform($request);
         if ($platform) {
             $request->session()->put('platform', $platform);
         }
 
-        $appleAuth = new AppleAuthService();
-        $authUrl = $appleAuth->getAuthorizationUrl($state);
-
-        return redirect()->away($authUrl);
+        return Socialite::driver('google')
+            ->scopes(['openid', 'profile', 'email'])
+            ->redirect();
     }
 
     /**
-     * Handle Apple callback
+     * Handle Google callback
      */
-    public function handleAppleCallback(Request $request): RedirectResponse
+    public function handleGoogleCallback(Request $request): RedirectResponse
     {
-        // Apple sends data via POST
-        $code = $request->input('code');
-        $state = $request->input('state');
-        $userData = $request->input('user'); // Only on first authorization
-
-        // Verify state
-        $sessionState = $request->session()->get('apple_state');
-        if (!$sessionState || $state !== $sessionState) {
-            return redirect()->route('auth.show')
-                ->withErrors(['error' => 'Invalid state parameter.']);
-        }
-
-        $request->session()->forget('apple_state');
-
-        if (!$code) {
-            $error = $request->input('error');
-            return redirect()->route('auth.show')
-                ->withErrors(['error' => $error ?? 'Apple authentication failed.']);
-        }
-
         try {
-            $appleAuth = new AppleAuthService();
-            
-            // Exchange code for tokens
-            $tokens = $appleAuth->getTokens($code);
-            $idToken = $tokens['id_token'] ?? null;
+            $googleUser = Socialite::driver('google')->user();
 
-            if (!$idToken) {
-                throw new \Exception('No ID token received from Apple');
-            }
-
-            // Get user info from ID token
-            $userInfo = $appleAuth->getUserInfo($idToken);
-            $appleId = $userInfo['apple_id'];
-            $email = $userInfo['email'];
-
-            // Parse user data if provided (only on first authorization)
-            $name = null;
-            if ($userData) {
-                $userDataDecoded = json_decode($userData, true);
-                if (isset($userDataDecoded['name'])) {
-                    $firstName = $userDataDecoded['name']['firstName'] ?? '';
-                    $lastName = $userDataDecoded['name']['lastName'] ?? '';
-                    $name = trim($firstName . ' ' . $lastName);
-                }
-            }
+            $googleId = $googleUser->getId();
+            $email = strtolower($googleUser->getEmail());
+            $name = $googleUser->getName();
+            $avatar = $googleUser->getAvatar();
 
             // Find or create user
-            $user = User::where('apple_id', $appleId)->first();
+            $user = User::where('google_id', $googleId)->first();
 
             if (!$user && $email) {
                 // Try to find by email
                 $user = User::where('email', $email)->first();
                 
                 if ($user) {
-                    // Link Apple ID to existing user
-                    $user->apple_id = $appleId;
+                    // Link Google ID to existing user
+                    $user->google_id = $googleId;
+                    if (!$user->name && $name) {
+                        $user->name = $name;
+                    }
                     $user->save();
                 }
             }
 
             if (!$user) {
-                // Create new user
                 if (!$email) {
-                    // Apple didn't provide email (user chose to hide it)
-                    // We need to ask for email or use a placeholder
-                    $request->session()->put('apple_id', $appleId);
-                    $request->session()->put('apple_name', $name);
-                    return redirect()->route('auth.apple.email');
+                    return redirect()->route('auth.show')
+                        ->withErrors(['error' => 'Unable to retrieve email from Google account.']);
                 }
 
                 // Generate unique allohash
@@ -447,10 +403,10 @@ class AuthController extends Controller
                 } while (User::where('allohash', $allohash)->exists());
 
                 $user = User::create([
-                    'name' => $name ?? 'Apple User',
+                    'name' => $name ?? 'Google User',
                     'email' => $email,
-                    'apple_id' => $appleId,
-                    'password' => Hash::make(Str::random(32)), // Random password since Apple auth doesn't use password
+                    'google_id' => $googleId,
+                    'password' => Hash::make(Str::random(32)), // Random password since Google auth doesn't use password
                     'allohash' => $allohash,
                 ]);
             }
@@ -463,78 +419,7 @@ class AuthController extends Controller
 
         } catch (\Exception $e) {
             return redirect()->route('auth.show')
-                ->withErrors(['error' => 'Apple authentication failed: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Google authentication failed: ' . $e->getMessage()]);
         }
-    }
-
-    /**
-     * Show email form for Apple users without email
-     */
-    public function showAppleEmail(Request $request): View|RedirectResponse
-    {
-        if (Auth::check()) {
-            return redirect()->route('dashboard');
-        }
-
-        $appleId = $request->session()->get('apple_id');
-        if (!$appleId) {
-            return redirect()->route('auth.show');
-        }
-
-        $platform = $request->session()->get('platform');
-
-        return view('auth.apple-email', [
-            'apple_name' => $request->session()->get('apple_name'),
-            'platform' => $platform,
-        ]);
-    }
-
-    /**
-     * Handle email submission for Apple users
-     */
-    public function handleAppleEmail(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'email' => ['required', 'email'],
-        ]);
-
-        $appleId = $request->session()->get('apple_id');
-        if (!$appleId) {
-            return redirect()->route('auth.show');
-        }
-
-        $email = strtolower($validated['email']);
-        $name = $request->session()->get('apple_name', 'Apple User');
-
-        // Check if email is already taken
-        $existingUser = User::where('email', $email)->first();
-        if ($existingUser) {
-            return back()
-                ->withInput()
-                ->withErrors(['email' => 'This email is already registered. Please login with password instead.']);
-        }
-
-        // Generate unique allohash
-        do {
-            $uniqueCode = Str::random(32) . time() . random_int(1000, 9999);
-            $allohash = Hash::make($uniqueCode);
-        } while (User::where('allohash', $allohash)->exists());
-
-        $user = User::create([
-            'name' => $name,
-            'email' => $email,
-            'apple_id' => $appleId,
-            'password' => Hash::make(Str::random(32)),
-            'allohash' => $allohash,
-        ]);
-
-        $request->session()->forget('apple_id');
-        $request->session()->forget('apple_name');
-
-        // Login user
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect()->route('dashboard')->with('status', 'Welcome to AlloSSO!');
     }
 }
