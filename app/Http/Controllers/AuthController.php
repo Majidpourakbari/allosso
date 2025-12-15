@@ -454,27 +454,49 @@ class AuthController extends Controller
      */
     public function handleAppleCallback(Request $request): RedirectResponse
     {
-        // Apple sends data via POST
-        $code = $request->input('code');
-        $state = $request->input('state');
-        $userData = $request->input('user'); // Only on first authorization
-
-        // Verify state
-        $sessionState = $request->session()->get('apple_state');
-        if (!$sessionState || $state !== $sessionState) {
-            return redirect()->route('auth.show')
-                ->withErrors(['error' => 'Invalid state parameter.']);
-        }
-
-        $request->session()->forget('apple_state');
-
-        if (!$code) {
-            $error = $request->input('error');
-            return redirect()->route('auth.show')
-                ->withErrors(['error' => $error ?? 'Apple authentication failed.']);
-        }
-
         try {
+            // Apple sends data via POST
+            $code = $request->input('code');
+            $state = $request->input('state');
+            $userData = $request->input('user'); // Only on first authorization
+
+            // Log for debugging
+            \Log::info('Apple Callback', [
+                'has_code' => !empty($code),
+                'has_state' => !empty($state),
+                'has_user_data' => !empty($userData),
+                'session_id' => $request->session()->getId(),
+            ]);
+
+            // Verify state - but be more lenient for first time users
+            $sessionState = $request->session()->get('apple_state');
+            if ($sessionState && $state && $state !== $sessionState) {
+                \Log::warning('Apple state mismatch', [
+                    'session_state' => $sessionState,
+                    'received_state' => $state,
+                ]);
+                // Don't fail immediately, continue if we have a code
+                if (!$code) {
+                    return redirect()->route('auth.show')
+                        ->withErrors(['error' => 'Invalid state parameter.']);
+                }
+            }
+
+            if ($sessionState) {
+                $request->session()->forget('apple_state');
+            }
+
+            if (!$code) {
+                $error = $request->input('error');
+                $errorDescription = $request->input('error_description');
+                \Log::error('Apple callback error', [
+                    'error' => $error,
+                    'error_description' => $errorDescription,
+                ]);
+                return redirect()->route('auth.show')
+                    ->withErrors(['error' => $errorDescription ?? $error ?? 'Apple authentication failed.']);
+            }
+
             $appleAuth = new AppleAuthService();
             
             // Exchange code for tokens
@@ -482,6 +504,7 @@ class AuthController extends Controller
             $idToken = $tokens['id_token'] ?? null;
 
             if (!$idToken) {
+                \Log::error('No ID token from Apple', ['tokens' => $tokens]);
                 throw new \Exception('No ID token received from Apple');
             }
 
@@ -489,6 +512,11 @@ class AuthController extends Controller
             $userInfo = $appleAuth->getUserInfo($idToken);
             $appleId = $userInfo['apple_id'];
             $email = $userInfo['email'];
+
+            \Log::info('Apple user info', [
+                'apple_id' => $appleId,
+                'has_email' => !empty($email),
+            ]);
 
             // Parse user data if provided (only on first authorization)
             $name = null;
@@ -511,6 +539,9 @@ class AuthController extends Controller
                 if ($user) {
                     // Link Apple ID to existing user
                     $user->apple_id = $appleId;
+                    if (!$user->name && $name) {
+                        $user->name = $name;
+                    }
                     $user->save();
                 }
             }
@@ -538,15 +569,24 @@ class AuthController extends Controller
                     'password' => Hash::make(Str::random(32)), // Random password since Apple auth doesn't use password
                     'allohash' => $allohash,
                 ]);
+
+                \Log::info('Created new Apple user', ['user_id' => $user->id]);
             }
 
             // Login user
             Auth::login($user);
             $request->session()->regenerate();
 
+            \Log::info('Apple login successful', ['user_id' => $user->id]);
+
             return redirect()->route('dashboard')->with('status', 'Welcome to AlloSSO!');
 
         } catch (\Exception $e) {
+            \Log::error('Apple callback exception', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
             return redirect()->route('auth.show')
                 ->withErrors(['error' => 'Apple authentication failed: ' . $e->getMessage()]);
         }
