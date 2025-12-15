@@ -6,7 +6,6 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Ecdsa\Sha256;
 use Lcobucci\JWT\Encoding\ChainedFormatter;
-use Lcobucci\JWT\Encoding\JoseEncoder;
 use Illuminate\Support\Facades\Http;
 
 class AppleAuthService
@@ -20,6 +19,10 @@ class AppleAuthService
         $keyId = config('services.apple.key_id');
         $clientId = config('services.apple.client_id');
         $privateKey = config('services.apple.private_key');
+
+        if (!$teamId || !$keyId || !$clientId || !$privateKey) {
+            throw new \Exception('Apple configuration is missing. Please check your .env file.');
+        }
 
         // Replace newlines if they're escaped
         $privateKey = str_replace('\\n', "\n", $privateKey);
@@ -115,4 +118,3 @@ class AppleAuthService
         ];
     }
 }
-
