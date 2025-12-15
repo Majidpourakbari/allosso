@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'api.key' => \App\Http\Middleware\VerifyApiKey::class,
         ]);
+        
+        // Disable CSRF for Apple callback
+        $middleware->validateCsrfTokens(except: [
+            'auth/apple/callback',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

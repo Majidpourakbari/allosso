@@ -36,7 +36,7 @@ Route::post('/allolancer/account-type', [AuthController::class, 'saveAllolancerA
 Route::get('/auth/apple', [AuthController::class, 'redirectToApple'])
     ->name('auth.apple');
 
-Route::post('/auth/apple/callback', [AuthController::class, 'handleAppleCallback'])
+Route::match(['get', 'post'], '/auth/apple/callback', [AuthController::class, 'handleAppleCallback'])
     ->name('auth.apple.callback');
 
 Route::get('/auth/apple/email', [AuthController::class, 'showAppleEmail'])
